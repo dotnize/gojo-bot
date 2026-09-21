@@ -32,7 +32,7 @@ export default defineCommand({
 
     if (problems.length > 0) {
       await interaction.reply({
-        content: `Complete the placeholder configuration before syncing: ${problems.join(", ")}.`,
+        content: `Complete the environment and role configuration before syncing: ${problems.join(", ")}.`,
         flags: MessageFlags.Ephemeral,
       });
       return;

@@ -1,5 +1,9 @@
+export function getEnv(name: string): string {
+  return process.env[name]?.trim() ?? "";
+}
+
 function requireEnv(name: string): string {
-  const value = process.env[name]?.trim();
+  const value = getEnv(name);
 
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
@@ -17,7 +21,7 @@ export function getBotConfig() {
 export function getCommandDeploymentConfig() {
   return {
     applicationId: requireEnv("DISCORD_APPLICATION_ID"),
-    guildId: process.env.DISCORD_GUILD_ID?.trim() || undefined,
+    guildId: getEnv("DISCORD_GUILD_ID") || undefined,
     token: requireEnv("DISCORD_TOKEN"),
   } as const;
 }

@@ -27,7 +27,7 @@ export default defineCommand({
 
     if (!isServerInfoConfigured()) {
       await interaction.reply({
-        content: "Replace the server info channel ID placeholder before syncing.",
+        content: "Set DISCORD_SERVER_INFO_CHANNEL_ID before syncing.",
         flags: MessageFlags.Ephemeral,
       });
       return;

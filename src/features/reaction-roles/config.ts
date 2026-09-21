@@ -1,3 +1,5 @@
+import { getEnv } from "#/config.ts";
+
 export interface ReactionRoleOption {
   readonly emoji: string;
   readonly label: string;
@@ -13,8 +15,7 @@ export interface ReactionRolePanel {
   readonly title: string;
 }
 
-/** Replace this value with the ID of the channel dedicated to reaction-role panels. */
-export const reactionRolesChannelId = "1534422600107692123";
+export const reactionRolesChannelId = getEnv("DISCORD_REACTION_ROLES_CHANNEL_ID");
 
 /**
  * Replace every enabled option's role ID with the corresponding Discord role ID.

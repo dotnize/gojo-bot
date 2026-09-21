@@ -1,13 +1,13 @@
 # Fun Command Ideas
 
-Ideas to revisit after `/chef-pick` and `/fortune`. The simplest useful version is listed first so
+Ideas to revisit after `/pick` and `/fortune`. The simplest useful version is listed first so
 each command can start small.
 
 ## Easy
 
 ### `/rate`
 
-Give a harmless subject a playful Pantry-themed score and comment. Consider deriving the score
+Give a harmless subject a playful score and comment. Consider deriving the score
 from the subject text so repeated ratings stay consistent. Avoid rating bodies or sensitive
 personal traits.
 
@@ -16,7 +16,7 @@ No external API, package, persistence, or additional gateway intent is needed.
 ### `/prompt`
 
 Return a random prompt from a selected category such as photo, drawing, voice chat, real-world
-activity, food, or community. Keep prompts in local curated lists.
+activity, hobbies, or community. Keep prompts in local curated lists.
 
 No external API, package, persistence, or additional gateway intent is needed.
 

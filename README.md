@@ -1,6 +1,6 @@
-# Pantry Chef
+# Community Discord Bot
 
-A Discord bot for The Pantry community, built with discord.js and TypeScript.
+A Discord bot for a Discord community, built with discord.js and TypeScript.
 
 ## Set up
 
@@ -26,10 +26,10 @@ treated as a command module. Nested category folders are not scanned.
 
 ## Reaction roles
 
-Replace the channel and role ID placeholders in
-`src/features/reaction-roles/config.ts`, then deploy the commands and run
-`/reaction-roles`. The command creates one managed message per enabled panel and updates those
-same messages on future runs.
+Set `DISCORD_REACTION_ROLES_CHANNEL_ID`, replace the role ID placeholders in
+`src/features/reaction-roles/config.ts`, then deploy the commands and run `/reaction-roles`. The
+command creates one managed message per enabled panel and updates those same messages on future
+runs.
 
 The bot requires View Channel, Send Messages, Embed Links, Read Message History, Add Reactions, and
 Manage Roles in the configured channel. Its highest role must be above every role it assigns.
@@ -39,9 +39,13 @@ channel by default; select the optional channel argument when the message is els
 
 ## Server information
 
-Replace the channel ID placeholder and edit the markdown in `src/features/server-info/config.ts`,
-then run `/server-info`. The command creates the managed server info embed or updates the
-existing one when the hardcoded markdown changes.
+Set `DISCORD_SERVER_INFO_CHANNEL_ID` and edit the markdown in
+`src/features/server-info/config.ts`, then run `/server-info`. The command creates the managed
+server info embed or updates the existing one when the hardcoded markdown changes.
+
+## Future work
+
+See the [roadmap](./docs/roadmap.md) for features being considered but not yet implemented.
 
 ## License
 

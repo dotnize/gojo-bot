@@ -1,4 +1,4 @@
-# The Chef agent guidelines
+# Discord Bot agent guidelines
 
 A Discord bot built with discord.js v14 and a modern Node.js stack: Node.js 24+ with built-in TypeScript support, Oxlint, Oxfmt.
 

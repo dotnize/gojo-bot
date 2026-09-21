@@ -1,6 +1,6 @@
-# The Pantry Community Bot
+# Community Discord Bot
 
-The language used for community automation and self-service features in The Pantry Discord server.
+The language used for community automation and self-service features in a community Discord server.
 
 ## Reaction Roles
 
@@ -15,5 +15,5 @@ _Avoid_: Reaction mapping, role mapping
 ## Community Information
 
 **Server info message**:
-The authoritative overview of The Pantry community presented to members in its dedicated channel.
+The authoritative overview of the community presented to members in its dedicated channel.
 _Avoid_: Server info embed, welcome message

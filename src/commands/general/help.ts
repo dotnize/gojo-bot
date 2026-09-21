@@ -57,7 +57,7 @@ export default defineCommand({
     );
     const embed = new EmbedBuilder()
       .setColor(helpColor)
-      .setTitle(selectedCategory ? `${selectedCategory} Commands` : "Pantry Chef Commands")
+      .setTitle(selectedCategory ? `${selectedCategory} Commands` : "Gojo Bot Commands")
       .setDescription(
         selectedCategory
           ? `Commands available in the \`${selectedCategory}\` category.`

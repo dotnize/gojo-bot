@@ -12,13 +12,13 @@ import {
 
 import { defineCommand } from "#/lib/commands.ts";
 
-const chefPickColor = 0xf1c40f;
+const pickColor = 0xf1c40f;
 const errorColor = 0xed4245;
 
 export default defineCommand({
   data: new SlashCommandBuilder()
-    .setName("chef-pick")
-    .setDescription("Let the chef pick from a list of choices.")
+    .setName("pick")
+    .setDescription("Pick one item from a list of choices.")
     .addStringOption((option) =>
       option
         .setName("choices")
@@ -39,7 +39,7 @@ export default defineCommand({
       const embed = new EmbedBuilder()
         .setColor(errorColor)
         .setTitle("Not enough choices")
-        .setDescription("Give the chef at least two choices separated by commas.");
+        .setDescription("Give me at least two choices separated by commas.");
 
       await interaction.reply({
         embeds: [embed],
@@ -52,7 +52,7 @@ export default defineCommand({
       const embed = new EmbedBuilder()
         .setColor(errorColor)
         .setTitle("Too many choices")
-        .setDescription("Keep the menu to 25 choices or fewer.");
+        .setDescription("Keep the list to 25 choices or fewer.");
 
       await interaction.reply({
         embeds: [embed],
@@ -68,11 +68,11 @@ export default defineCommand({
       ...choices.map((choice) => subtext(`- ${escapeMarkdown(choice)}`)),
     ].join("\n");
     const embed = new EmbedBuilder()
-      .setColor(chefPickColor)
+      .setColor(pickColor)
       .setDescription(
-        [choiceList, heading(`🍽️ Chef's pick: ${selectedChoice}`, HeadingLevel.Two)].join("\n"),
+        [choiceList, heading(`🎲 Picked: ${selectedChoice}`, HeadingLevel.Two)].join("\n"),
       )
-      .setFooter({ text: "The chef has spoken." });
+      .setFooter({ text: "Decision made." });
 
     await interaction.reply({
       embeds: [embed],
