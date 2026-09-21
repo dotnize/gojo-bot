@@ -25,13 +25,12 @@ export const reactionRolePanels = [
   {
     key: "languages",
     title: "Languages",
-    description: "React below to show the languages you speak.",
+    description: "React below to show the non-English languages you speak.",
     color: 0x57f287,
     enabled: true,
     options: [
-      { emoji: "🇬🇧", label: "English", roleId: "REPLACE_WITH_ENGLISH_ROLE_ID" },
       { emoji: "🇵🇭", label: "Filipino", roleId: "REPLACE_WITH_FILIPINO_ROLE_ID" },
-      { emoji: "🌴", label: "Cebuano", roleId: "REPLACE_WITH_CEBUANO_ROLE_ID" },
+      { emoji: "🌴", label: "Mandarin", roleId: "REPLACE_WITH_CEBUANO_ROLE_ID" },
     ],
   },
   {
@@ -44,7 +43,6 @@ export const reactionRolePanels = [
       { emoji: "🔴", label: "Roblox", roleId: "REPLACE_WITH_ROBLOX_ROLE_ID" },
       { emoji: "⛏️", label: "Minecraft", roleId: "REPLACE_WITH_MINECRAFT_ROLE_ID" },
       { emoji: "🔺", label: "Valorant", roleId: "REPLACE_WITH_VALORANT_ROLE_ID" },
-      { emoji: "💥", label: "CS2", roleId: "REPLACE_WITH_CS2_ROLE_ID" },
     ],
   },
   {
