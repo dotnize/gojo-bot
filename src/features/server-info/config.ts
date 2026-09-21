@@ -4,13 +4,10 @@ export const serverInfoChannelId = getEnv("DISCORD_SERVER_INFO_CHANNEL_ID");
 
 /** Edit this markdown, then run `/server-info` to publish the changes. */
 export const serverInfoMarkdown = `
-## BAD BOY
-
-### :speech_balloon: Languages
-Bisaya • Filipino • English
+## hunter the bad boy
 
 ### :video_game: We usually play
-Counter-Strike • Roblox • Minecraft • Steam games • whatever looks fun
+Roblox • Minecraft • Steam games • whatever looks fun
 
 ### :pushpin: Basically
 - Don't be an asshole
