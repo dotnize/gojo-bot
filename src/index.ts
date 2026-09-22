@@ -1,6 +1,6 @@
 import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
 
-import { handleAskMention } from "#/commands/general/ask.ts";
+import { handleAskMessage } from "#/commands/general/ask.ts";
 import { getBotConfig } from "#/config.ts";
 import { handleReactionRoleChange } from "#/features/reaction-roles/index.ts";
 import { handleInteraction } from "#/handle-interaction.ts";
@@ -29,8 +29,8 @@ client.on(Events.InteractionCreate, (interaction) => {
 });
 
 client.on(Events.MessageCreate, (message) => {
-  void handleAskMention(message).catch((error: unknown) => {
-    console.error("Failed to handle a mention:", error);
+  void handleAskMessage(message).catch((error: unknown) => {
+    console.error("Failed to handle an ask message:", error);
   });
 });
 
