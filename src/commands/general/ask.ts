@@ -9,7 +9,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getGeminiTextAdapter } from "#/lib/ai.ts";
+import { getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -117,20 +117,22 @@ async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Pro
     { role: "assistant", content: answer },
   ]);
   messages.push({ role: "user", content: prompt });
-  const stream = chat({
-    adapter: getGeminiTextAdapter(),
-    messages,
-    systemPrompts: [
-      `${systemPrompt} For the language tip only, use ${tipTopic} as a loose theme and choose a natural everyday expression. End with a plain-text line in exactly this format: ${tipFormat}. Do not use Markdown on that line.`,
-    ],
+  return withGeminiFallback(async (model) => {
+    const stream = chat({
+      adapter: getGeminiTextAdapter(model),
+      messages,
+      systemPrompts: [
+        `${systemPrompt} For the language tip only, use ${tipTopic} as a loose theme and choose a natural everyday expression. End with a plain-text line in exactly this format: ${tipFormat}. Do not use Markdown on that line.`,
+      ],
+    });
+    const answer = (await streamToText(stream)).trim();
+
+    if (!answer) {
+      throw new Error("Gemini returned an empty response.");
+    }
+
+    return parseBotAnswer(answer);
   });
-  const answer = (await streamToText(stream)).trim();
-
-  if (!answer) {
-    throw new Error("Gemini returned an empty response.");
-  }
-
-  return parseBotAnswer(answer);
 }
 
 function buildResponseEmbed(
