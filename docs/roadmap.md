@@ -16,7 +16,7 @@ are already entirely English are returned unchanged.
 The translator can read up to two messages before and two after the selected message to resolve
 meaning, while translating only the selected message.
 
-`/catch-up` uses the same model to translate and summarize the last 10–50 text messages. Results
+`/catch-up` uses the same model to translate and summarize the last 5–50 text messages. Results
 are ephemeral unless the caller enables `share`. This feature requires Discord's Message Content
 privileged intent and the Read Message History permission.
 

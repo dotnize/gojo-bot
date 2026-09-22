@@ -70,8 +70,8 @@ export default defineCommand({
     .addIntegerOption((option) =>
       option
         .setName("messages")
-        .setDescription("Number of recent messages to inspect (default: 25).")
-        .setMinValue(10)
+        .setDescription("Number of recent messages to inspect (default: 15).")
+        .setMinValue(5)
         .setMaxValue(50),
     )
     .addBooleanOption((option) =>
@@ -91,7 +91,7 @@ export default defineCommand({
       return;
     }
 
-    const messageCount = interaction.options.getInteger("messages") ?? 25;
+    const messageCount = interaction.options.getInteger("messages") ?? 15;
     const share = interaction.options.getBoolean("share") ?? false;
 
     await interaction.deferReply({

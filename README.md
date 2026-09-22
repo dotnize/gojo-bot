@@ -36,9 +36,9 @@ Use **Apps → Translate to English** on a message for an ephemeral English tran
 is intended for Filipino/Tagalog, Cebuano/Bisaya, Simplified or informal Chinese/Mandarin, and
 mixed messages. It can use up to two nearby messages on each side for context.
 
-`/catch-up` summarizes 10–50 recent text messages in English and is ephemeral by default. Set its
-`share` option to post the result in the channel. Both features send relevant message text to the
-configured Gemini model and may make mistakes.
+`/catch-up` summarizes 5–50 recent text messages in English (15 by default) and is ephemeral by
+default. Set its `share` option to post the result in the channel. Both features send relevant
+message text to the configured Gemini model and may make mistakes.
 
 See [the language tools documentation](./docs/language-tools.md) for supported languages, privacy
 behavior, limits, and required permissions.

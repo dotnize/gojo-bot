@@ -22,8 +22,8 @@ unchanged and labeled **Already in English**.
 
 ## Catch up on a channel
 
-Run `/catch-up` in a server text channel. The optional `messages` argument accepts 10–50 and
-defaults to 25. The bot reads that many recent channel messages, removes bot and empty messages,
+Run `/catch-up` in a server text channel. The optional `messages` argument accepts 5–50 and
+defaults to 15. The bot reads that many recent channel messages, removes bot and empty messages,
 then sends an English summary.
 
 The result is ephemeral by default. Enable the optional `share` argument to post it directly in the
