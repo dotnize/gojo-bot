@@ -71,6 +71,7 @@ interface BotAnswer {
     readonly expression: string;
     readonly language: string;
     readonly meaning: string;
+    readonly pinyin?: string;
   };
 }
 
@@ -84,7 +85,7 @@ function fitEmbedDescription(description: string): string {
 
 function parseBotAnswer(answer: string): BotAnswer {
   const languageTipMatch = answer.match(
-    /(?:^|\n)LANGUAGE_TIP:\s*(Tagalog|Mandarin)\s*\|\s*([^|\n]+)\s*\|\s*([^|\n]+)$/iu,
+    /(?:^|\n)LANGUAGE_TIP:\s*(Tagalog|Mandarin)\s*\|\s*([^|\n]+)\s*\|\s*([^|\n]+)(?:\s*\|\s*([^|\n]+))?$/iu,
   );
 
   if (!languageTipMatch?.index) {
@@ -94,16 +95,23 @@ function parseBotAnswer(answer: string): BotAnswer {
   const body = answer.slice(0, languageTipMatch.index).trim();
   const language = languageTipMatch[1]?.trim();
   const expression = languageTipMatch[2]?.trim();
-  const meaning = languageTipMatch[3]?.trim();
+  const thirdField = languageTipMatch[3]?.trim();
+  const fourthField = languageTipMatch[4]?.trim();
+  const pinyin = language === "Mandarin" ? thirdField : undefined;
+  const meaning = language === "Mandarin" ? fourthField : thirdField;
 
-  return body && language && expression && meaning
-    ? { body, languageTip: { expression, language, meaning } }
+  return body && language && expression && meaning && (language !== "Tagalog" || !fourthField)
+    ? { body, languageTip: { expression, language, meaning, ...(pinyin && { pinyin }) } }
     : { body: answer };
 }
 
 async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Promise<BotAnswer> {
   const tipLanguage = randomInt(2) === 0 ? "Tagalog" : "Mandarin";
   const tipTopic = languageTipTopics[randomInt(languageTipTopics.length)];
+  const tipFormat =
+    tipLanguage === "Mandarin"
+      ? "LANGUAGE_TIP: Mandarin | <one very short casual, informal, or slang expression in Simplified Chinese> | <its matching Hanyu Pinyin with tone marks> | <its English meaning>"
+      : "LANGUAGE_TIP: Tagalog | <one very short casual, informal, or slang expression in Tagalog> | <its English meaning>";
   const messages: ModelMessage[] = history.flatMap(({ prompt, answer }) => [
     { role: "user", content: prompt },
     { role: "assistant", content: answer },
@@ -113,7 +121,7 @@ async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Pro
     adapter: getGeminiTextAdapter(),
     messages,
     systemPrompts: [
-      `${systemPrompt} For the language tip only, use ${tipTopic} as a loose theme and choose a natural everyday expression. End with a plain-text line in exactly this format: LANGUAGE_TIP: ${tipLanguage} | <one very short casual, informal, or slang word, phrase, or sentence in ${tipLanguage}> | <its English meaning>. Do not use Markdown on that line.`,
+      `${systemPrompt} For the language tip only, use ${tipTopic} as a loose theme and choose a natural everyday expression. End with a plain-text line in exactly this format: ${tipFormat}. Do not use Markdown on that line.`,
     ],
   });
   const answer = (await streamToText(stream)).trim();
@@ -136,7 +144,7 @@ function buildResponseEmbed(
 
   if (languageTip) {
     embed.setFooter({
-      text: `Tip • ${languageTip.language}: ${languageTip.expression} — ${languageTip.meaning}`,
+      text: `Tip • ${languageTip.language}: ${languageTip.expression}${languageTip.pinyin ? ` (${languageTip.pinyin})` : ""} — ${languageTip.meaning}`,
     });
   }
 
