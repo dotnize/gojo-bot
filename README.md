@@ -40,6 +40,9 @@ mixed messages.
 `share` option to post the result in the channel. Both features send the selected text to the
 configured Gemini model and may make mistakes.
 
+See [the language tools documentation](./docs/language-tools.md) for supported languages, privacy
+behavior, limits, and required permissions.
+
 ## Reaction roles
 
 Set `DISCORD_REACTION_ROLES_CHANNEL_ID`, replace the role ID placeholders in

@@ -11,6 +11,7 @@ import type {
 export interface ChatInputCommandDefinition {
   readonly kind: "chatInput";
   readonly data: Pick<SlashCommandBuilder, "name" | "toJSON">;
+  readonly helpDescription?: string;
   execute(
     interaction: ChatInputCommandInteraction,
     commandRegistry: CommandRegistry,
@@ -20,6 +21,7 @@ export interface ChatInputCommandDefinition {
 export interface MessageCommandDefinition {
   readonly kind: "message";
   readonly data: Pick<ContextMenuCommandBuilder, "name" | "toJSON">;
+  readonly helpDescription: string;
   execute(
     interaction: MessageContextMenuCommandInteraction,
     commandRegistry: CommandRegistry,

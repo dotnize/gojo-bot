@@ -15,10 +15,7 @@ export default defineCommand({
 
   async execute(interaction, commandRegistry) {
     const selectedCategory = interaction.options.getString("category")?.trim().toUpperCase();
-    const commandsByCategory = Map.groupBy(
-      commandRegistry.values().filter((command) => command.kind === "chatInput"),
-      (command) => command.category,
-    );
+    const commandsByCategory = Map.groupBy(commandRegistry.values(), (command) => command.category);
     const categories = [...commandsByCategory.keys()].sort((left, right) =>
       left.localeCompare(right),
     );
@@ -46,7 +43,11 @@ export default defineCommand({
       const value = commands
         .toSorted((left, right) => left.data.name.localeCompare(right.data.name))
         .map((command) => {
-          const description = command.data.toJSON().description;
+          if (command.kind === "message") {
+            return `- \`Apps → ${command.data.name}\` — ${command.helpDescription}`;
+          }
+
+          const description = command.helpDescription ?? command.data.toJSON().description;
 
           return `- \`/${command.data.name}\` — ${description}`;
         })
