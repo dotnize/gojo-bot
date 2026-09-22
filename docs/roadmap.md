@@ -1,14 +1,22 @@
 # Roadmap
 
-Ideas in this document are planned or under consideration and are not implemented yet.
+This document tracks features that are planned, under consideration, or recently shipped.
 
-## Message translation
+## Message translation (implemented)
 
 Help members of a multilingual community understand one another without forcing everyone to use
 the same language. The first version should translate a message only when a member explicitly asks
 for it, preserve the original message, and clearly label the source and target languages.
 
-Before implementation, decide how members request a translation, which languages are supported,
-whether language detection is automatic, and how translated content is sent without creating
-channel noise. The design should also document privacy expectations, provider limits, failure
-behavior, and ways to report a misleading translation.
+Members can use **Apps → Translate to English** on a single message. The result is ephemeral and
+labels the automatically detected source as Filipino/Tagalog, Cebuano/Bisaya, Chinese/Mandarin, or
+a mixture of supported languages. It uses the configured Gemini Flash-Lite model and is intended
+for Simplified, modern, slang, and informal Chinese rather than Traditional Chinese.
+
+`/catch-up` uses the same model to translate and summarize the last 10–50 text messages. Results
+are ephemeral unless the caller enables `share`. This feature requires Discord's Message Content
+privileged intent and the Read Message History permission.
+
+Selected or fetched message text is sent to Gemini only when a member invokes one of these
+features. Both prompts treat messages as untrusted text, and responses warn that AI translations
+and summaries can make mistakes.

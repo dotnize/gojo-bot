@@ -1,8 +1,15 @@
 import { readdir } from "node:fs/promises";
 
-import type { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommandType } from "discord.js";
+import type {
+  ChatInputCommandInteraction,
+  ContextMenuCommandBuilder,
+  MessageContextMenuCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 
-export interface CommandDefinition {
+export interface ChatInputCommandDefinition {
+  readonly kind: "chatInput";
   readonly data: Pick<SlashCommandBuilder, "name" | "toJSON">;
   execute(
     interaction: ChatInputCommandInteraction,
@@ -10,15 +17,37 @@ export interface CommandDefinition {
   ): Promise<void>;
 }
 
-export interface Command extends CommandDefinition {
-  readonly category: string;
+export interface MessageCommandDefinition {
+  readonly kind: "message";
+  readonly data: Pick<ContextMenuCommandBuilder, "name" | "toJSON">;
+  execute(
+    interaction: MessageContextMenuCommandInteraction,
+    commandRegistry: CommandRegistry,
+  ): Promise<void>;
 }
+
+export type CommandDefinition = ChatInputCommandDefinition | MessageCommandDefinition;
+
+export type Command = CommandDefinition & {
+  readonly category: string;
+};
 
 /**
  * Defines a command while contextually typing its execute callback.
  */
-export function defineCommand(command: CommandDefinition): CommandDefinition {
-  return command;
+export function defineCommand(
+  command: Omit<ChatInputCommandDefinition, "kind">,
+): ChatInputCommandDefinition {
+  return { ...command, kind: "chatInput" };
+}
+
+/**
+ * Defines a message context-menu command while contextually typing its execute callback.
+ */
+export function defineMessageCommand(
+  command: Omit<MessageCommandDefinition, "kind">,
+): MessageCommandDefinition {
+  return { ...command, kind: "message" };
 }
 
 export type CommandRegistry = ReadonlyMap<string, Command>;
@@ -32,7 +61,10 @@ function isCommandDefinition(value: unknown): value is CommandDefinition {
 
   const command = value as Partial<CommandDefinition>;
 
+  const kindIsValid = command.kind === "chatInput" || command.kind === "message";
+
   return (
+    kindIsValid &&
     typeof command.data?.name === "string" &&
     typeof command.data.toJSON === "function" &&
     typeof command.execute === "function"
@@ -85,14 +117,29 @@ export function createCommandRegistry(commands: readonly Command[]): CommandRegi
   const registry = new Map<string, Command>();
 
   for (const command of commands) {
-    const name = command.data.name;
+    const key =
+      command.kind === "chatInput"
+        ? getChatInputCommandKey(command.data.name)
+        : getMessageCommandKey(command.data.name);
 
-    if (registry.has(name)) {
-      throw new Error(`Duplicate command name: ${name}`);
+    if (registry.has(key)) {
+      throw new Error(`Duplicate command: ${key}`);
     }
 
-    registry.set(name, command);
+    registry.set(key, command);
   }
 
   return registry;
+}
+
+export function getCommandKey(type: ApplicationCommandType, name: string): string {
+  return `${type}:${name}`;
+}
+
+export function getChatInputCommandKey(name: string): string {
+  return getCommandKey(ApplicationCommandType.ChatInput, name);
+}
+
+export function getMessageCommandKey(name: string): string {
+  return getCommandKey(ApplicationCommandType.Message, name);
 }
