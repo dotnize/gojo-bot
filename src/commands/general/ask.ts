@@ -1,7 +1,6 @@
 import { randomInt } from "node:crypto";
 
 import { chat, streamToText } from "@tanstack/ai";
-import { geminiText } from "@tanstack/ai-gemini";
 import {
   EmbedBuilder,
   SlashCommandBuilder,
@@ -9,6 +8,7 @@ import {
   type Message,
 } from "discord.js";
 
+import { getGeminiTextAdapter } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -56,7 +56,7 @@ function parseBotAnswer(answer: string): BotAnswer {
 async function askBot(prompt: string): Promise<BotAnswer> {
   const tipLanguage = randomInt(2) === 0 ? "Tagalog" : "Mandarin";
   const stream = chat({
-    adapter: geminiText("gemini-3.5-flash-lite"),
+    adapter: getGeminiTextAdapter(),
     messages: [{ role: "user", content: prompt }],
     systemPrompts: [
       `${systemPrompt} End with a plain-text line in exactly this format: LANGUAGE_TIP: ${tipLanguage} | <one very short casual, informal, or slang word, phrase, or sentence in ${tipLanguage}> | <its English meaning>. Do not use Markdown on that line.`,

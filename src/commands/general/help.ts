@@ -43,7 +43,11 @@ export default defineCommand({
       const value = commands
         .toSorted((left, right) => left.data.name.localeCompare(right.data.name))
         .map((command) => {
-          const description = command.data.toJSON().description;
+          if (command.kind === "message") {
+            return `- \`Apps → ${command.data.name}\` — ${command.helpDescription}`;
+          }
+
+          const description = command.helpDescription ?? command.data.toJSON().description;
 
           return `- \`/${command.data.name}\` — ${description}`;
         })

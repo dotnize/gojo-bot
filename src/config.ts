@@ -25,3 +25,9 @@ export function getCommandDeploymentConfig() {
     token: requireEnv("DISCORD_TOKEN"),
   } as const;
 }
+
+export function getAiConfig() {
+  return {
+    model: getEnv("GEMINI_MODEL") || "gemini-3.5-flash-lite",
+  } as const;
+}
