@@ -127,9 +127,19 @@ export default defineCommand({
       return;
     }
 
+    const channel = interaction.channel;
+
+    if (!channel?.isSendable()) {
+      await interaction.reply({
+        content: "I can't post language tips in this channel.",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
     const topic = interaction.options.getString("topic")?.trim();
 
-    await interaction.deferReply();
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     try {
       const tips = await generateLanguageTips(topic);
@@ -151,12 +161,13 @@ export default defineCommand({
         embed.setDescription(`Topic: ${topic}`);
       }
 
-      await interaction.editReply({ embeds: [embed] });
+      const message = await channel.send({ embeds: [embed] });
+      await interaction.editReply(`Posted the [language tips](${message.url}) in this channel.`);
     } catch (error) {
-      console.error("Failed to generate language tips:", error);
+      console.error("Failed to post language tips:", error);
 
       await interaction.editReply({
-        content: "I couldn't make language tips right now. Please try again in a moment.",
+        content: "I couldn't post language tips right now. Please try again in a moment.",
       });
     }
   },
