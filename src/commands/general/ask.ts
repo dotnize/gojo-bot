@@ -108,7 +108,10 @@ export async function handleAskMention(message: Message): Promise<void> {
   if (
     !message.inGuild() ||
     message.author.bot ||
-    !message.mentions.has(message.client.user, { ignoreRepliedUser: true })
+    !message.mentions.has(message.client.user, {
+      ignoreEveryone: true,
+      ignoreRepliedUser: true,
+    })
   ) {
     return;
   }
