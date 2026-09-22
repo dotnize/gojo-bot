@@ -8,6 +8,7 @@ A Discord bot for a Discord community, built with discord.js and TypeScript.
 2. Copy `.env.example` to `.env` and fill in your bot token, application ID, and Gemini AI API key.
    `GEMINI_MODEL` is optional and defaults to `gemini-3.5-flash-lite`. If a Gemini request fails,
    the bot retries it once with `gemini-3.1-flash-lite` (unless that is already the selected model).
+   Each attempt has a five-minute timeout, except `/catch-up`, which allows six minutes per attempt.
 3. During development, set `DISCORD_GUILD_ID` so command updates deploy to one server quickly.
 4. In the Discord Developer Portal, enable the **Message Content Intent** for the bot. `/catch-up`
    needs it to read recent message text.

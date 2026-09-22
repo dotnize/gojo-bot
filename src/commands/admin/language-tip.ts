@@ -93,9 +93,10 @@ function isLanguageTips(value: unknown): value is LanguageTips {
 }
 
 async function generateLanguageTips(topic?: string): Promise<LanguageTips> {
-  return withGeminiFallback(async (model) => {
+  return withGeminiFallback(async (model, abortController) => {
     const result: unknown = await chat({
       adapter: getGeminiTextAdapter(model),
+      abortController,
       messages: [
         {
           role: "user",

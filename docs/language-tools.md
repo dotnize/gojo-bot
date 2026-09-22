@@ -42,8 +42,9 @@ channel instead. Shared summaries are generated publicly without a private previ
 - AI output can mistranslate slang, miss context, or summarize incorrectly. Members should check
   important details against the original conversation and report misleading output to the bot
   maintainer with the original text and the incorrect result.
-- If a Gemini request fails, the bot retries once with `gemini-3.1-flash-lite`. If that also fails,
-  the command returns an error. Unreadable nearby history does not prevent translation of the
+- If a Gemini request fails or times out, the bot retries once with `gemini-3.1-flash-lite`.
+  Translation allows five minutes per attempt; catch-up allows six minutes per attempt. If the retry
+  also fails, the command returns an error. Unreadable nearby history does not prevent translation of the
   selected message; unreadable catch-up history returns an error instead of a partial summary.
 
 ## Discord configuration

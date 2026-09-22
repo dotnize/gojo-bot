@@ -112,9 +112,10 @@ function isTranslationResult(value: unknown): value is TranslationResult {
 }
 
 async function translateMessage(input: TranslationInput): Promise<TranslationResult> {
-  return withGeminiFallback(async (model) => {
+  return withGeminiFallback(async (model, abortController) => {
     const result: unknown = await chat({
       adapter: getGeminiTextAdapter(model),
+      abortController,
       messages: [
         {
           role: "user",

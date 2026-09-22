@@ -7,7 +7,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
+import { catchUpAiTimeoutMs, getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0x5865f2;
@@ -41,9 +41,10 @@ function toTranscriptMessage(message: Message): TranscriptMessage | undefined {
 }
 
 async function summarizeMessages(messages: readonly TranscriptMessage[]): Promise<string> {
-  return withGeminiFallback(async (model) => {
+  return withGeminiFallback(async (model, abortController) => {
     const stream = chat({
       adapter: getGeminiTextAdapter(model),
+      abortController,
       messages: [
         {
           role: "user",
@@ -61,7 +62,7 @@ async function summarizeMessages(messages: readonly TranscriptMessage[]): Promis
     }
 
     return summary;
-  });
+  }, catchUpAiTimeoutMs);
 }
 
 export default defineCommand({

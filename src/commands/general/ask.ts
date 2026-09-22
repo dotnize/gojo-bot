@@ -117,9 +117,10 @@ async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Pro
     { role: "assistant", content: answer },
   ]);
   messages.push({ role: "user", content: prompt });
-  return withGeminiFallback(async (model) => {
+  return withGeminiFallback(async (model, abortController) => {
     const stream = chat({
       adapter: getGeminiTextAdapter(model),
+      abortController,
       messages,
       systemPrompts: [
         `${systemPrompt} For the language tip only, use ${tipTopic} as a loose theme and choose a natural everyday expression. End with a plain-text line in exactly this format: ${tipFormat}. Do not use Markdown on that line.`,
