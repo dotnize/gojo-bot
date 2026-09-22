@@ -7,8 +7,10 @@ A Discord bot for a Discord community, built with discord.js and TypeScript.
 1. Install dependencies with `pnpm install`.
 2. Copy `.env.example` to `.env` and fill in your bot token, application ID, and Gemini AI API key.
 3. During development, set `DISCORD_GUILD_ID` so command updates deploy to one server quickly.
-4. Run `pnpm commands:deploy` whenever a command definition changes.
-5. Run `pnpm dev` to start the bot with Node's watch mode.
+4. Enable the **Message Content Intent** on the bot's Discord developer portal page. This is
+   required for `/catch-up` to read recent channel messages.
+5. Run `pnpm deploy-cmds` whenever a command definition changes.
+6. Run `pnpm dev` to start the bot with Node's watch mode.
 
 Use `pnpm start` outside development and `pnpm check` to run formatting and type-aware linting
 checks.
@@ -42,6 +44,15 @@ channel by default; select the optional channel argument when the message is els
 Set `DISCORD_SERVER_INFO_CHANNEL_ID` and edit the markdown in
 `src/features/server-info/config.ts`, then run `/server-info`. The command creates the managed
 server info embed or updates the existing one when the hardcoded markdown changes.
+
+## Language tools
+
+Right-click or long-press a message and choose **Apps → Translate** to privately translate it into
+English. `/catch-up` privately summarizes the latest 10–50 human messages in the current channel
+in English, with a button to share the result to the channel.
+
+Both features use Gemini Flash-Lite. See [the language tools documentation](./docs/language-tools.md)
+for supported languages, privacy behavior, limits, and required permissions.
 
 ## Future work
 

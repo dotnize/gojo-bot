@@ -1,23 +1,51 @@
 import { readdir } from "node:fs/promises";
 
-import type { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  ApplicationCommandType,
+  type ChatInputCommandInteraction,
+  type ContextMenuCommandBuilder,
+  type MessageContextMenuCommandInteraction,
+  type SlashCommandBuilder,
+} from "discord.js";
 
-export interface CommandDefinition {
+export interface ChatInputCommandDefinition {
   readonly data: Pick<SlashCommandBuilder, "name" | "toJSON">;
+  readonly helpDescription?: string;
   execute(
     interaction: ChatInputCommandInteraction,
     commandRegistry: CommandRegistry,
   ): Promise<void>;
 }
 
-export interface Command extends CommandDefinition {
-  readonly category: string;
+export interface MessageCommandDefinition {
+  readonly data: Pick<ContextMenuCommandBuilder, "name" | "toJSON">;
+  readonly helpDescription: string;
+  execute(
+    interaction: MessageContextMenuCommandInteraction,
+    commandRegistry: CommandRegistry,
+  ): Promise<void>;
 }
+
+export type CommandDefinition = ChatInputCommandDefinition | MessageCommandDefinition;
+
+export type ChatInputCommand = ChatInputCommandDefinition & { readonly category: string };
+export type MessageCommand = MessageCommandDefinition & { readonly category: string };
+export type Command = ChatInputCommand | MessageCommand;
+export type SupportedCommandType =
+  | ApplicationCommandType.ChatInput
+  | ApplicationCommandType.Message;
 
 /**
  * Defines a command while contextually typing its execute callback.
  */
-export function defineCommand(command: CommandDefinition): CommandDefinition {
+export function defineCommand(command: ChatInputCommandDefinition): ChatInputCommandDefinition {
+  return command;
+}
+
+/**
+ * Defines a message context-menu command while contextually typing its execute callback.
+ */
+export function defineMessageCommand(command: MessageCommandDefinition): MessageCommandDefinition {
   return command;
 }
 
@@ -37,6 +65,36 @@ function isCommandDefinition(value: unknown): value is CommandDefinition {
     typeof command.data.toJSON === "function" &&
     typeof command.execute === "function"
   );
+}
+
+export function getCommandType(command: CommandDefinition): SupportedCommandType {
+  const type = command.data.toJSON().type ?? ApplicationCommandType.ChatInput;
+
+  if (type !== ApplicationCommandType.ChatInput && type !== ApplicationCommandType.Message) {
+    throw new TypeError(`Unsupported application command type: ${type}`);
+  }
+
+  return type;
+}
+
+export function isChatInputCommand(command: Command): command is ChatInputCommand {
+  return getCommandType(command) === ApplicationCommandType.ChatInput;
+}
+
+export function isMessageCommand(command: Command): command is MessageCommand {
+  return getCommandType(command) === ApplicationCommandType.Message;
+}
+
+function getCommandKey(type: SupportedCommandType, name: string): string {
+  return `${type}:${name}`;
+}
+
+export function getRegisteredCommand(
+  registry: CommandRegistry,
+  type: SupportedCommandType,
+  name: string,
+): Command | undefined {
+  return registry.get(getCommandKey(type, name));
 }
 
 /**
@@ -75,7 +133,7 @@ export async function loadCommands(): Promise<readonly Command[]> {
   );
   const commands = commandsByCategory.flat();
 
-  // Validate duplicate names for every consumer, including the deployment script.
+  // Validate duplicate names within each command type for every consumer, including deployment.
   createCommandRegistry(commands);
 
   return commands;
@@ -86,12 +144,14 @@ export function createCommandRegistry(commands: readonly Command[]): CommandRegi
 
   for (const command of commands) {
     const name = command.data.name;
+    const type = getCommandType(command);
+    const key = getCommandKey(type, name);
 
-    if (registry.has(name)) {
-      throw new Error(`Duplicate command name: ${name}`);
+    if (registry.has(key)) {
+      throw new Error(`Duplicate command name and type: ${name} (${type})`);
     }
 
-    registry.set(name, command);
+    registry.set(key, command);
   }
 
   return registry;

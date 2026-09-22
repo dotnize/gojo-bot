@@ -1,14 +1,12 @@
 # Roadmap
 
-Ideas in this document are planned or under consideration and are not implemented yet.
+Ideas in this document are planned, under consideration, or recently completed.
 
-## Message translation
+## Language tools — implemented
 
-Help members of a multilingual community understand one another without forcing everyone to use
-the same language. The first version should translate a message only when a member explicitly asks
-for it, preserve the original message, and clearly label the source and target languages.
+Members can privately translate a selected message with **Apps → Translate** or summarize recent
+channel conversation with `/catch-up`. Both features use Gemini Flash-Lite, always output English,
+and support Filipino/Tagalog, Cebuano/Bisaya, and Simplified Chinese/Mandarin.
 
-Before implementation, decide how members request a translation, which languages are supported,
-whether language detection is automatic, and how translated content is sent without creating
-channel noise. The design should also document privacy expectations, provider limits, failure
-behavior, and ways to report a misleading translation.
+See [language tools](./language-tools.md) for behavior, privacy expectations, limits, permissions,
+failure behavior, and how to report a misleading result.

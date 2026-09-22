@@ -1,6 +1,11 @@
-import { EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  ApplicationCommandType,
+  EmbedBuilder,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 
-import { defineCommand } from "#/lib/commands.ts";
+import { defineCommand, getCommandType } from "#/lib/commands.ts";
 
 const helpColor = 0x5865f2;
 const errorColor = 0xed4245;
@@ -43,9 +48,15 @@ export default defineCommand({
       const value = commands
         .toSorted((left, right) => left.data.name.localeCompare(right.data.name))
         .map((command) => {
-          const description = command.data.toJSON().description;
+          const data = command.data.toJSON();
+          const isMessageCommand = getCommandType(command) === ApplicationCommandType.Message;
+          const invocation = isMessageCommand
+            ? `Apps → ${command.data.name}`
+            : `/${command.data.name}`;
+          const description =
+            command.helpDescription ?? ("description" in data ? data.description : undefined);
 
-          return `- \`/${command.data.name}\` — ${description}`;
+          return `- \`${invocation}\` — ${description ?? "No description available."}`;
         })
         .join("\n");
 
