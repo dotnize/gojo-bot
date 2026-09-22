@@ -34,10 +34,10 @@ from **Apps** after right-clicking or long-pressing a message.
 
 Use **Apps → Translate to English** on a message for an ephemeral English translation. Translation
 is intended for Filipino/Tagalog, Cebuano/Bisaya, Simplified or informal Chinese/Mandarin, and
-mixed messages.
+mixed messages. It can use up to two nearby messages on each side for context.
 
 `/catch-up` summarizes 10–50 recent text messages in English and is ephemeral by default. Set its
-`share` option to post the result in the channel. Both features send the selected text to the
+`share` option to post the result in the channel. Both features send relevant message text to the
 configured Gemini model and may make mistakes.
 
 See [the language tools documentation](./docs/language-tools.md) for supported languages, privacy

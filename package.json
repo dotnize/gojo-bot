@@ -23,8 +23,8 @@
     "intent": "pnpm dlx @tanstack/intent@latest"
   },
   "dependencies": {
-    "@tanstack/ai": "0.55.0",
-    "@tanstack/ai-gemini": "0.30.0",
+    "@tanstack/ai": "0.57.0",
+    "@tanstack/ai-gemini": "0.31.1",
     "discord.js": "14.27.0"
   },
   "devDependencies": {

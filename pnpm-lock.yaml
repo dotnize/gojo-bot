@@ -167,11 +167,11 @@ importers:
   .:
     dependencies:
       '@tanstack/ai':
-        specifier: 0.55.0
-        version: 0.55.0
+        specifier: 0.57.0
+        version: 0.57.0
       '@tanstack/ai-gemini':
-        specifier: 0.30.0
-        version: 0.30.0(@tanstack/ai@0.55.0)
+        specifier: 0.31.1
+        version: 0.31.1(@tanstack/ai@0.57.0)
       discord.js:
         specifier: 14.27.0
         version: 14.27.0
@@ -561,19 +561,19 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@tanstack/ai-event-client@0.11.3':
-    resolution: {integrity: sha512-K5Nw05TG2NPJNunV7LI/5m7S97XHHdxN7vwTYcbKbmA5txlToaiF4wCfYBT406m7BOeGlLHZJpr3m1M6Vaai4g==}
+  '@tanstack/ai-event-client@0.12.0':
+    resolution: {integrity: sha512-84BqJsTbitlGWQTpEfW47oaUJzmoc4HiM0TvNOzFMPOZmQVqTi/rfi7gCYYaM1HgLCdI85U0VDDjKzV1KVN7UA==}
 
-  '@tanstack/ai-gemini@0.30.0':
-    resolution: {integrity: sha512-mRd3BR0VnxTo0890yZwvJPEfA4kTHzeWyzIhlM1rWTClo2GRpoLIoS0sYv6RQw2TK8jNtiVMHaRLDY6VjrtxHw==}
+  '@tanstack/ai-gemini@0.31.1':
+    resolution: {integrity: sha512-NjDtKBg5egCJTI4ioge2GA7Rczlw3E+15cpyDxI0ILKjfHuqeuvzPPagnbH+1NCXukohYDWOBpmXhUY2IHNCwg==}
     peerDependencies:
-      '@tanstack/ai': ^0.55.0
+      '@tanstack/ai': ^0.57.0
 
   '@tanstack/ai-utils@0.4.0':
     resolution: {integrity: sha512-xqvAgPJkIuGk1m+jZKyb7vBTQIaBmUD9EVzlPkDWWMp80n69uwL0TnBZCVk+OwL9goTQiFy648dnBfLsiJgl6A==}
 
-  '@tanstack/ai@0.55.0':
-    resolution: {integrity: sha512-VkevqxTDQWeVjWIAR2SQzR6Hi8t6dNdZHfh4jQZEumanwyzsUbBvuPpzf6RldnMY7Z4eX0MHfV9esxAiOukc+A==}
+  '@tanstack/ai@0.57.0':
+    resolution: {integrity: sha512-CiPgknjSxFOjiZODYo5LP0nSNfx5wl1z29imsbFPzRPUa7Et3ilEeEo6i4eh+l9DrLvuJqeZtjZFWF5qFjgPxw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@opentelemetry/api': '>=1.9.0'
@@ -1162,14 +1162,14 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@tanstack/ai-event-client@0.11.3':
+  '@tanstack/ai-event-client@0.12.0':
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
 
-  '@tanstack/ai-gemini@0.30.0(@tanstack/ai@0.55.0)':
+  '@tanstack/ai-gemini@0.31.1(@tanstack/ai@0.57.0)':
     dependencies:
       '@google/genai': 2.23.0
-      '@tanstack/ai': 0.55.0
+      '@tanstack/ai': 0.57.0
       '@tanstack/ai-utils': 0.4.0
       partial-json: 0.1.7
     transitivePeerDependencies:
@@ -1180,11 +1180,11 @@ snapshots:
 
   '@tanstack/ai-utils@0.4.0': {}
 
-  '@tanstack/ai@0.55.0':
+  '@tanstack/ai@0.57.0':
     dependencies:
       '@ag-ui/core': 0.1.1-canary.beta.0
       '@standard-schema/spec': 1.1.0
-      '@tanstack/ai-event-client': 0.11.3
+      '@tanstack/ai-event-client': 0.12.0
       '@tanstack/ai-utils': 0.4.0
       partial-json: 0.1.7
     transitivePeerDependencies:

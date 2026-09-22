@@ -10,6 +10,11 @@ On desktop, right-click a message; on mobile, long-press it. Choose **Apps → T
 English**. The bot sends the translation as an ephemeral response visible only to the person who
 requested it.
 
+The bot also reads up to two messages before and two after the selected message in the same channel
+to help resolve its meaning when they are clearly related. The translator is instructed to ignore
+unrelated messages and translate only the selected message. Bot and empty nearby messages are
+excluded; if nearby history is unavailable, it translates the selected message alone.
+
 The translator recognizes Filipino/Tagalog, Cebuano/Bisaya, and Simplified Chinese/Mandarin,
 including informal language, slang, and English code-switching. It preserves tone, names, mentions,
 emoji, links, and formatting where possible. Messages already entirely in English are returned
@@ -26,7 +31,8 @@ channel instead. Shared summaries are generated publicly without a private previ
 
 ## Privacy, limits, and failures
 
-- Translation sends the selected message text to Gemini only after a member invokes the command.
+- Translation sends the selected message and up to four nearby human messages to Gemini only after
+  a member invokes the command. Nearby text is limited to 1,000 characters per message.
 - Catch-up sends the readable human messages in the requested history window to Gemini only after
   a member invokes the command.
 - The bot does not add persistent storage for message text, translations, or summaries. Provider
@@ -36,13 +42,15 @@ channel instead. Shared summaries are generated publicly without a private previ
 - AI output can mistranslate slang, miss context, or summarize incorrectly. Members should check
   important details against the original conversation and report misleading output to the bot
   maintainer with the original text and the incorrect result.
-- Provider errors, missing permissions, and unreadable histories return an error instead of posting
-  a partial translation or summary.
+- Provider errors return an error. Unreadable nearby history does not prevent translation of the
+  selected message; unreadable catch-up history returns an error instead of a partial summary.
 
 ## Discord configuration
 
 `Apps → Translate to English` receives the explicitly selected message through the interaction.
-`/catch-up` fetches arbitrary recent history, so it additionally requires:
+Reading nearby messages also requires View Channel and Read Message History permissions and the
+privileged **Message Content Intent** enabled in the Discord Developer Portal.
+`/catch-up` also fetches recent history and requires:
 
 - The privileged **Message Content Intent** enabled in the Discord Developer Portal.
 - View Channel and Read Message History permissions in channels where it is used.

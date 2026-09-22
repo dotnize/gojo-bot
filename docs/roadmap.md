@@ -13,6 +13,8 @@ labels the automatically detected source as Filipino/Tagalog, Cebuano/Bisaya, Ch
 a mixture of supported languages. It uses the configured Gemini Flash-Lite model and is intended
 for Simplified, modern, slang, and informal Chinese rather than Traditional Chinese. Messages that
 are already entirely English are returned unchanged.
+The translator can read up to two messages before and two after the selected message to resolve
+meaning, while translating only the selected message.
 
 `/catch-up` uses the same model to translate and summarize the last 10–50 text messages. Results
 are ephemeral unless the caller enables `share`. This feature requires Discord's Message Content
