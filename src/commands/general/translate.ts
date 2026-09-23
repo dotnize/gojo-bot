@@ -5,6 +5,7 @@ import {
   EmbedBuilder,
   InteractionContextType,
   MessageFlags,
+  escapeMarkdown,
   type Message,
 } from "discord.js";
 
@@ -15,6 +16,7 @@ import { showShareablePreview } from "#/lib/share-preview.ts";
 const responseColor = 0x57f287;
 const surroundingMessageCount = 2;
 const contextTextLimit = 1_000;
+const originalExcerptLimit = 400;
 const supportedSourceLanguages = [
   "Filipino / Tagalog",
   "Cebuano / Bisaya",
@@ -68,6 +70,19 @@ function toTranslationMessage(message: Message, textLimit: number): TranslationM
     author: message.member?.displayName ?? message.author.displayName,
     text: message.content.trim().slice(0, textLimit),
   };
+}
+
+function originalMessageLink(message: Message): string {
+  const author = message.member?.displayName ?? message.author.displayName;
+  const text = message.content.trim().replaceAll(/\s+/gu, " ");
+  const excerpt = text.slice(0, originalExcerptLimit);
+  const label = escapeMarkdown(
+    `${author}: ${excerpt}${text.length > originalExcerptLimit ? "…" : ""}`,
+  )
+    .replaceAll("[", "\\[")
+    .replaceAll("]", "\\]");
+
+  return `[${label}](${message.url})`;
 }
 
 async function getTranslationInput(message: Message): Promise<TranslationInput> {
@@ -174,7 +189,7 @@ export default defineMessageCommand({
       .setDescription(result.translation)
       .addFields({
         name: "Original message",
-        value: `[Jump to message by @${interaction.targetMessage.author.username}](${interaction.targetMessage.url})`,
+        value: originalMessageLink(interaction.targetMessage),
       })
       .setFooter({ text: "AI translation can make mistakes." });
 
