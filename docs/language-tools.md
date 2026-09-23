@@ -8,7 +8,8 @@ languages. Both always return English and use the same configured Gemini Flash-L
 
 On desktop, right-click a message; on mobile, long-press it. Choose **Apps → Translate to
 English**. The bot sends the translation as an ephemeral response visible only to the person who
-requested it.
+requested it. Review it, then press **Share** to publish it in the same channel if you want.
+The published footer identifies the member who shared it.
 
 The bot also reads up to two messages before and two after the selected message in the same channel
 to help resolve its meaning when they are clearly related. The translator is instructed to ignore
@@ -26,8 +27,9 @@ Run `/catch-up` in a server text channel. The optional `messages` argument accep
 defaults to 15. The bot reads that many recent channel messages, removes bot and empty messages,
 then sends an English summary.
 
-The result is ephemeral by default. Enable the optional `share` argument to post it directly in the
-channel instead. Shared summaries are generated publicly without a private preview.
+The result is always ephemeral. Review it, then press **Share** to publish it in the same channel
+if you want. The Share button expires 14 minutes after the command starts, and a successful share
+can only post once. The published footer identifies the member who shared it.
 
 ## Privacy, limits, and failures
 
@@ -56,6 +58,7 @@ privileged **Message Content Intent** enabled in the Discord Developer Portal.
 
 - The privileged **Message Content Intent** enabled in the Discord Developer Portal.
 - View Channel and Read Message History permissions in channels where it is used.
-- Send Messages and Embed Links permissions when `share` is enabled.
+- Send Messages and Embed Links permissions to publish with **Share**. Translation needs these
+  permissions to publish its preview too.
 
 After deploying the code, run `pnpm deploy-cmds` to register both application commands.

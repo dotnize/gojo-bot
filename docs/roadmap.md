@@ -16,9 +16,10 @@ are already entirely English are returned unchanged.
 The translator can read up to two messages before and two after the selected message to resolve
 meaning, while translating only the selected message.
 
-`/catch-up` uses the same model to translate and summarize the last 5–50 text messages. Results
-are ephemeral unless the caller enables `share`. This feature requires Discord's Message Content
-privileged intent and the Read Message History permission.
+`/catch-up` uses the same model to translate and summarize the last 5–50 text messages. Both
+commands give the caller a private preview with a **Share** button to publish it in the channel.
+Catch-up requires Discord's Message Content privileged intent and the Read Message History
+permission.
 
 Selected or fetched message text is sent to Gemini only when a member invokes one of these
 features. Both prompts treat messages as untrusted text, and responses warn that AI translations
