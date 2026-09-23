@@ -10,7 +10,7 @@ On desktop, right-click a message; on mobile, long-press it. Choose **Apps → T
 English**. The bot sends the translation as an ephemeral response visible only to the person who
 requested it. Review it, then press **Share** to publish it in the same channel if you want.
 The translation shows the original author and message text as a clickable link in both the private
-preview and the published post. Long original messages are shortened to 400 characters; clicking
+preview and the published post. Long original messages are shortened to 120 characters; clicking
 the text jumps to the full original. The published footer identifies the member who shared it.
 
 The bot also reads up to two messages before and two after the selected message in the same channel
