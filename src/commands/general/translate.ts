@@ -10,6 +10,7 @@ import {
 
 import { getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
 import { defineMessageCommand } from "#/lib/commands.ts";
+import { showShareablePreview } from "#/lib/share-preview.ts";
 
 const responseColor = 0x57f287;
 const surroundingMessageCount = 2;
@@ -177,6 +178,13 @@ export default defineMessageCommand({
       embed.addFields({ name: "Context", value: result.note });
     }
 
-    await interaction.editReply({ embeds: [embed] });
+    const channel = interaction.targetMessage.channel;
+
+    if (!channel.isSendable()) {
+      await interaction.editReply({ embeds: [embed] });
+      return;
+    }
+
+    await showShareablePreview(interaction, channel, embed);
   },
 });

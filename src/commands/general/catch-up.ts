@@ -9,6 +9,7 @@ import {
 
 import { catchUpAiTimeoutMs, getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
+import { showShareablePreview } from "#/lib/share-preview.ts";
 
 const responseColor = 0x5865f2;
 const embedDescriptionLimit = 4_096;
@@ -76,17 +77,12 @@ export default defineCommand({
         .setDescription("Number of recent messages to inspect (default: 15).")
         .setMinValue(5)
         .setMaxValue(50),
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("share")
-        .setDescription("Post the catch-up to the channel instead of showing it only to you."),
     ),
 
   async execute(interaction) {
     const channel = interaction.channel;
 
-    if (!channel?.isTextBased() || !("messages" in channel)) {
+    if (!channel?.isTextBased() || !("messages" in channel) || !channel.isSendable()) {
       await interaction.reply({
         content: "I can't read message history in this channel.",
         flags: MessageFlags.Ephemeral,
@@ -95,11 +91,7 @@ export default defineCommand({
     }
 
     const messageCount = interaction.options.getInteger("messages") ?? 15;
-    const share = interaction.options.getBoolean("share") ?? false;
-
-    await interaction.deferReply({
-      flags: share ? undefined : MessageFlags.Ephemeral,
-    });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const fetchedMessages = await channel.messages.fetch({ limit: messageCount });
     const transcript = fetchedMessages
@@ -121,6 +113,6 @@ export default defineCommand({
         text: `Summarized ${transcript.length} message${transcript.length === 1 ? "" : "s"} • AI summaries can make mistakes.`,
       });
 
-    await interaction.editReply({ embeds: [embed] });
+    await showShareablePreview(interaction, channel, embed);
   },
 });
