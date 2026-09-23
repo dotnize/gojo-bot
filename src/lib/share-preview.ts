@@ -24,8 +24,10 @@ export async function showShareablePreview(
       .setStyle(ButtonStyle.Primary),
   );
   const preview = await interaction.editReply({ embeds: [embed], components: [row] });
+  const originalFooter = embed.data.footer?.text;
   const sharedEmbed = new EmbedBuilder(embed.toJSON()).setFooter({
-    text: `${embed.data.footer?.text ?? ""} • Shared by @${interaction.user.username}`,
+    text: `Shared by @${interaction.user.username}${originalFooter ? ` • ${originalFooter}` : ""}`,
+    iconURL: interaction.user.displayAvatarURL({ size: 64 }),
   });
   const collector = preview.createMessageComponentCollector({
     componentType: ComponentType.Button,
