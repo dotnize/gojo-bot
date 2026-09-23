@@ -9,6 +9,7 @@ languages. Both always return English and use the same configured Gemini Flash-L
 On desktop, right-click a message; on mobile, long-press it. Choose **Apps → Translate to
 English**. The bot sends the translation as an ephemeral response visible only to the person who
 requested it. Review it, then press **Share** to publish it in the same channel if you want.
+The published footer identifies the member who shared it.
 
 The bot also reads up to two messages before and two after the selected message in the same channel
 to help resolve its meaning when they are clearly related. The translator is instructed to ignore
@@ -28,7 +29,7 @@ then sends an English summary.
 
 The result is always ephemeral. Review it, then press **Share** to publish it in the same channel
 if you want. The Share button expires 14 minutes after the command starts, and a successful share
-can only post once.
+can only post once. The published footer identifies the member who shared it.
 
 ## Privacy, limits, and failures
 

@@ -3,9 +3,9 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
+  EmbedBuilder,
   MessageFlags,
   type ChatInputCommandInteraction,
-  type EmbedBuilder,
   type MessageContextMenuCommandInteraction,
   type SendableChannels,
 } from "discord.js";
@@ -24,6 +24,9 @@ export async function showShareablePreview(
       .setStyle(ButtonStyle.Primary),
   );
   const preview = await interaction.editReply({ embeds: [embed], components: [row] });
+  const sharedEmbed = new EmbedBuilder(embed.toJSON()).setFooter({
+    text: `${embed.data.footer?.text ?? ""} • Shared by @${interaction.user.username}`,
+  });
   const collector = preview.createMessageComponentCollector({
     componentType: ComponentType.Button,
     time: Math.max(1, shareTimeoutMs - (Date.now() - interaction.createdTimestamp)),
@@ -57,7 +60,10 @@ export async function showShareablePreview(
     }
 
     try {
-      const published = await channel.send({ embeds: [embed], allowedMentions: { parse: [] } });
+      const published = await channel.send({
+        embeds: [sharedEmbed],
+        allowedMentions: { parse: [] },
+      });
       collector.stop("shared");
       await button
         .editReply({ content: `Shared in this channel: ${published.url}` })
