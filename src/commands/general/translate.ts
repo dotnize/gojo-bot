@@ -16,7 +16,7 @@ import { showShareablePreview } from "#/lib/share-preview.ts";
 const responseColor = 0x57f287;
 const surroundingMessageCount = 2;
 const contextTextLimit = 1_000;
-const originalExcerptLimit = 400;
+const originalExcerptLimit = 120;
 const supportedSourceLanguages = [
   "Filipino / Tagalog",
   "Cebuano / Bisaya",
