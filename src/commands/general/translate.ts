@@ -172,6 +172,10 @@ export default defineMessageCommand({
       .setColor(responseColor)
       .setTitle(title)
       .setDescription(result.translation)
+      .addFields({
+        name: "Original message",
+        value: `[Jump to message by @${interaction.targetMessage.author.username}](${interaction.targetMessage.url})`,
+      })
       .setFooter({ text: "AI translation can make mistakes." });
 
     if (result.note) {

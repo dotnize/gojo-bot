@@ -9,7 +9,8 @@ languages. Both always return English and use the same configured Gemini Flash-L
 On desktop, right-click a message; on mobile, long-press it. Choose **Apps → Translate to
 English**. The bot sends the translation as an ephemeral response visible only to the person who
 requested it. Review it, then press **Share** to publish it in the same channel if you want.
-The published footer identifies the member who shared it.
+The translation includes a link back to the selected message in both the private preview and the
+published post. The published footer identifies the member who shared it.
 
 The bot also reads up to two messages before and two after the selected message in the same channel
 to help resolve its meaning when they are clearly related. The translator is instructed to ignore
