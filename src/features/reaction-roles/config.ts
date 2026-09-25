@@ -38,7 +38,7 @@ export const reactionRolePanels = [
     enabled: true,
     options: [
       { emoji: "🧱", label: "Roblox", roleId: "1553062033694662656" },
-      { emoji: "🎯", label: "FPS", roleId: "1553062052850049044" },
+      { emoji: "🎯", label: "FPS Games", roleId: "1553062052850049044" },
       { emoji: "⛏️", label: "Minecraft", roleId: "1553062082918883499" },
       { emoji: "🎉", label: "Party Games", roleId: "1553062106234880151" },
       { emoji: "🎬", label: "Movie Nights", roleId: "1553062127504330793" },
