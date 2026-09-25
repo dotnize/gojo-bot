@@ -7,26 +7,26 @@ import { defineCommand } from "#/lib/commands.ts";
 const fortuneColor = 0x9b59b6;
 
 const fortunes = [
-  "A small win will find you when you least expect it.",
-  "The next idea you almost dismiss is worth another look.",
-  "Someone in the group is about to make your day better.",
-  "A small detour will lead to something delightful.",
-  "A quiet day will turn into a memorable one.",
-  "An unfinished project is ready for one more try.",
-  "Today favors bold ideas and bolder decisions.",
-  "A pleasant surprise is hiding behind an ordinary plan.",
-  "Share the good news; luck remembers generosity.",
-  "The answer will arrive after a short break.",
-  "Your current chaos will make sense soon.",
-  "A forgotten favorite is due for a comeback.",
-  "Trust your instincts, but check the details.",
-  "A fresh start is closer than it looks.",
-  "Someone will appreciate the message you nearly did not send.",
-  "Your luck improves when you invite a friend along.",
-  "The plan may change, but things will work out.",
-  "A tiny victory is closer than it looks.",
-  "You will soon discover a new favorite thing.",
-  "Excellent vibes are heading your way.",
+  "u will step on poop later. somehow, both shoes.",
+  "a horse will drop on top of u. it will act like u started it.",
+  "ur phone will die at 1% while ur charger watches.",
+  "u will wave back at someone waving to the person behind u.",
+  "the mosquito in ur room already knows ur schedule.",
+  "ur next sneeze will disappear right when it gets good.",
+  "u will open the fridge 4 times. same nothing, bestie.",
+  "ur food will arrive the second u enter the bathroom.",
+  "the chair will make a fart noise. nobody will believe u.",
+  "u will step in a mystery puddle while wearing socks.",
+  "ur alarm will go off on ur day off. very loyal of it.",
+  "someone will say 'we need to talk' and then go offline.",
+  "u will lose a fight with a plastic bag in public.",
+  "ur sleeve will catch the door handle on the way out.",
+  "one of ur slippers will disappear. just one, obviously.",
+  "ur rice will be ready. the rest of dinner is still loading.",
+  "u will accidentally call someone 'mom'. everyone will hear.",
+  "u will pull on a push door. someone will be watching.",
+  "ur sock will slide down inside ur shoe. it will stay there.",
+  "ur delivery will tour the entire city before reaching u.",
 ] as const;
 
 export default defineCommand({
@@ -36,7 +36,7 @@ export default defineCommand({
     const fortune = fortunes[randomInt(fortunes.length)] ?? fortunes[0];
     const embed = new EmbedBuilder()
       .setColor(fortuneColor)
-      .setTitle("🔮 Your Fortune")
+      .setTitle("🍪 Your Fortune")
       .setDescription(fortune);
 
     await interaction.reply({ embeds: [embed] });
