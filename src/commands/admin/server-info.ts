@@ -12,7 +12,7 @@ import { defineCommand } from "#/lib/commands.ts";
 export default defineCommand({
   data: new SlashCommandBuilder()
     .setName("server-info")
-    .setDescription("Create or update the server information embed.")
+    .setDescription("Create or update the server information embeds.")
     .setContexts(InteractionContextType.Guild)
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
@@ -43,7 +43,7 @@ export default defineCommand({
         : "";
 
     await interaction.editReply(
-      `${action} the [server info embed](${result.message.url}) in <#${serverInfoChannelId}>.${duplicateNote}`,
+      `${action} the [server info embeds](${result.message.url}) in <#${serverInfoChannelId}>.${duplicateNote}`,
     );
   },
 });

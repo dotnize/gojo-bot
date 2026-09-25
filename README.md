@@ -71,7 +71,8 @@ role must be above the member role. This applies to new joins, not members alrea
 
 Set `DISCORD_SERVER_INFO_CHANNEL_ID` and edit the markdown in
 `src/features/server-info/config.ts`, then run `/server-info`. The command creates the managed
-server info embed or updates the existing one when the hardcoded markdown changes.
+server info message with two embeds (server information and translation features), or updates the
+existing message when the hardcoded markdown changes.
 
 ## Future work
 
