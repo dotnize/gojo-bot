@@ -12,8 +12,19 @@ function requireEnv(name: string): string {
   return value;
 }
 
+function requireDiscordId(name: string): string {
+  const value = requireEnv(name);
+
+  if (!/^\d{17,20}$/.test(value)) {
+    throw new Error(`Invalid Discord ID for environment variable: ${name}`);
+  }
+
+  return value;
+}
+
 export function getBotConfig() {
   return {
+    memberRoleId: requireDiscordId("DISCORD_MEMBER_ROLE_ID"),
     token: requireEnv("DISCORD_TOKEN"),
   } as const;
 }

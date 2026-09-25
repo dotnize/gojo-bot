@@ -6,11 +6,12 @@ import { handleReactionRoleChange } from "#/features/reaction-roles/index.ts";
 import { handleInteraction } from "#/handle-interaction.ts";
 import { createCommandRegistry, loadCommands } from "#/lib/commands.ts";
 
-const { token } = getBotConfig();
+const { memberRoleId, token } = getBotConfig();
 const commandRegistry = createCommandRegistry(await loadCommands());
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.MessageContent,
@@ -20,6 +21,18 @@ const client = new Client({
 
 client.once(Events.ClientReady, (readyClient) => {
   console.info(`Ready as ${readyClient.user.tag}.`);
+});
+
+client.on(Events.GuildMemberAdd, (member) => {
+  if (member.user.bot) {
+    return;
+  }
+
+  void member.roles
+    .add(memberRoleId, "Automatically assigned member role on join")
+    .catch((error: unknown) => {
+      console.error(`Failed to assign the member role to ${member.user.id}:`, error);
+    });
 });
 
 client.on(Events.InteractionCreate, (interaction) => {

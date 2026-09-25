@@ -5,13 +5,15 @@ A Discord bot for a Discord community, built with discord.js and TypeScript.
 ## Set up
 
 1. Install dependencies with `pnpm install`.
-2. Copy `.env.example` to `.env` and fill in your bot token, application ID, and Gemini AI API key.
+2. Copy `.env.example` to `.env` and fill in your bot token, application ID, member role ID, and
+   Gemini AI API key.
    `GEMINI_MODEL` is optional and defaults to `gemini-3.5-flash-lite`. If a Gemini request fails,
    the bot retries it once with `gemini-3.1-flash-lite` (unless that is already the selected model).
    Each attempt has a five-minute timeout, except `/catch-up`, which allows six minutes per attempt.
 3. During development, set `DISCORD_GUILD_ID` so command updates deploy to one server quickly.
 4. In the Discord Developer Portal, enable the **Message Content Intent** for the bot. `/catch-up`
-   needs it to read recent message text.
+   needs it to read recent message text. Enable the **Server Members Intent** so the bot receives
+   member join events.
 5. Run `pnpm deploy-cmds` whenever a command definition changes.
 6. Run `pnpm dev` to start the bot with Node's watch mode.
 
@@ -57,6 +59,12 @@ Manage Roles in the configured channel. Its highest role must be above every rol
 
 `/embed create` creates a simple markdown-enabled embed. `/embed edit` edits an embed in the current
 channel by default; select the optional channel argument when the message is elsewhere.
+
+## Member role
+
+Set `DISCORD_MEMBER_ROLE_ID` to the ID of the role every new human member should receive. The bot
+assigns it when someone joins; bots are skipped. The bot needs **Manage Roles**, and its highest
+role must be above the member role. This applies to new joins, not members already in the server.
 
 ## Server information
 

@@ -17,41 +17,32 @@ export interface ReactionRolePanel {
 
 export const reactionRolesChannelId = getEnv("DISCORD_REACTION_ROLES_CHANNEL_ID");
 
-/**
- * Replace every enabled option's role ID with the corresponding Discord role ID.
- * The disabled Interests panel is a template for when that category is decided.
- */
+/** Replace every option's role ID with the corresponding Discord role ID. */
 export const reactionRolePanels = [
   {
     key: "languages",
     title: "Languages",
-    description: "React below to show the non-English languages you speak.",
+    description: "React below for the non-English languages you speak.",
     color: 0x57f287,
     enabled: true,
     options: [
-      { emoji: "🇵🇭", label: "Filipino", roleId: "REPLACE_WITH_FILIPINO_ROLE_ID" },
-      { emoji: "🌴", label: "Mandarin", roleId: "REPLACE_WITH_CEBUANO_ROLE_ID" },
+      { emoji: "🟡", label: "Filipino", roleId: "1553057648113483776" },
+      { emoji: "🟣", label: "Mandarin", roleId: "1553057674365636660" },
     ],
   },
   {
-    key: "lfg",
-    title: "Looking for Group",
-    description: "React below to receive pings when people are looking for a group.",
+    key: "activities",
+    title: "Activities",
+    description: "Get pinged for invites for games or other activities.",
     color: 0x5865f2,
     enabled: true,
     options: [
-      { emoji: "🔴", label: "Roblox", roleId: "REPLACE_WITH_ROBLOX_ROLE_ID" },
-      { emoji: "⛏️", label: "Minecraft", roleId: "REPLACE_WITH_MINECRAFT_ROLE_ID" },
-      { emoji: "🔺", label: "Valorant", roleId: "REPLACE_WITH_VALORANT_ROLE_ID" },
+      { emoji: "🧱", label: "Roblox", roleId: "1553062033694662656" },
+      { emoji: "🎯", label: "FPS", roleId: "1553062052850049044" },
+      { emoji: "⛏️", label: "Minecraft", roleId: "1553062082918883499" },
+      { emoji: "🎉", label: "Party Games", roleId: "1553062106234880151" },
+      { emoji: "🎬", label: "Movie Nights", roleId: "1553062127504330793" },
     ],
-  },
-  {
-    key: "interests",
-    title: "Interests",
-    description: "React below to share your interests with the community.",
-    color: 0xfee75c,
-    enabled: false,
-    options: [{ emoji: "📚", label: "Replace me", roleId: "REPLACE_WITH_INTEREST_ROLE_ID" }],
   },
 ] as const satisfies readonly ReactionRolePanel[];
 
