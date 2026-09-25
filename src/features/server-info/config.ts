@@ -12,7 +12,7 @@ Roblox • Minecraft • Steam games • whatever looks fun
 ### :pushpin: Basically
 - Don't be an asshole
 - Any language welcome, but be considerate and speak English when needed
-- Join VC plz
+- Don't be a stranger, hop in VC sometimes
 `.trim();
 
 const snowflakePattern = /^\d{17,20}$/;

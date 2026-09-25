@@ -13,8 +13,11 @@ import { defineCommand } from "#/lib/commands.ts";
 
 const embedColor = 0x5865f2;
 
-function buildEmbed(content: string): EmbedBuilder {
-  return new EmbedBuilder().setColor(embedColor).setDescription(content);
+function buildEmbed(content: string, title: string | null, footer: string | null): EmbedBuilder {
+  const embed = new EmbedBuilder().setColor(embedColor).setDescription(content);
+  if (title !== null) embed.setTitle(title);
+  if (footer !== null) embed.setFooter({ text: footer });
+  return embed;
 }
 
 export default defineCommand({
@@ -40,6 +43,12 @@ export default defineCommand({
             .setDescription("The embed description, with Discord markdown supported.")
             .setMaxLength(4096)
             .setRequired(true),
+        )
+        .addStringOption((option) =>
+          option.setName("title").setDescription("The embed title.").setMaxLength(256),
+        )
+        .addStringOption((option) =>
+          option.setName("footer").setDescription("The embed footer.").setMaxLength(2048),
         ),
     )
     .addSubcommand((subcommand) =>
@@ -66,6 +75,12 @@ export default defineCommand({
             .setName("channel")
             .setDescription("The message's channel; defaults to the current channel.")
             .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement),
+        )
+        .addStringOption((option) =>
+          option.setName("title").setDescription("The new embed title.").setMaxLength(256),
+        )
+        .addStringOption((option) =>
+          option.setName("footer").setDescription("The new embed footer.").setMaxLength(2048),
         ),
     ),
 
@@ -80,6 +95,8 @@ export default defineCommand({
 
     const subcommand = interaction.options.getSubcommand();
     const content = interaction.options.getString("content", true);
+    const title = interaction.options.getString("title");
+    const footer = interaction.options.getString("footer");
 
     if (subcommand === "create") {
       const channelId = interaction.options.getChannel("channel", true).id;
@@ -96,7 +113,7 @@ export default defineCommand({
         return;
       }
 
-      const message = await channel.send({ embeds: [buildEmbed(content)] });
+      const message = await channel.send({ embeds: [buildEmbed(content, title, footer)] });
 
       await interaction.reply({
         content: `Created [embed](${message.url}) in <#${channel.id}>.`,
@@ -149,7 +166,7 @@ export default defineCommand({
       return;
     }
 
-    await message.edit({ content: null, embeds: [buildEmbed(content)] });
+    await message.edit({ content: null, embeds: [buildEmbed(content, title, footer)] });
     await interaction.reply({
       content: `Updated [embed](${message.url}).`,
       flags: MessageFlags.Ephemeral,

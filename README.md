@@ -57,8 +57,9 @@ runs.
 The bot requires View Channel, Send Messages, Embed Links, Read Message History, Add Reactions, and
 Manage Roles in the configured channel. Its highest role must be above every role it assigns.
 
-`/embed create` creates a simple markdown-enabled embed. `/embed edit` edits an embed in the current
-channel by default; select the optional channel argument when the message is elsewhere.
+`/embed create` creates a markdown-enabled embed with an optional title and footer. `/embed edit`
+replaces an embed's description, optional title, and optional footer in the current channel by
+default; select the optional channel argument when the message is elsewhere.
 
 ## Member role
 
