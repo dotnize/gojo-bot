@@ -114,6 +114,9 @@ export default defineCommand({
       }
 
       const message = await channel.send({ embeds: [buildEmbed(content, title, footer)] });
+      console.log(
+        `/embed create by ${interaction.user.tag} (${interaction.user.id}): ${message.url}`,
+      );
 
       await interaction.reply({
         content: `Created [embed](${message.url}) in <#${channel.id}>.`,
@@ -167,6 +170,7 @@ export default defineCommand({
     }
 
     await message.edit({ content: null, embeds: [buildEmbed(content, title, footer)] });
+    console.log(`/embed edit by ${interaction.user.tag} (${interaction.user.id}): ${message.url}`);
     await interaction.reply({
       content: `Updated [embed](${message.url}).`,
       flags: MessageFlags.Ephemeral,
