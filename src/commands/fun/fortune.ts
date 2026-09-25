@@ -27,6 +27,10 @@ const fortunes = [
   "u will pull on a push door. someone will be watching.",
   "ur sock will slide down inside ur shoe. it will stay there.",
   "ur delivery will tour the entire city before reaching u.",
+  "the elevator will close while everyone inside makes eye contact with u.",
+  "the last bite of ur snack will fall on the floor. the good side down.",
+  "u will forget why u walked into the room. twice.",
+  "ur autocorrect will choose violence in the group chat.",
 ] as const;
 
 export default defineCommand({
@@ -36,7 +40,7 @@ export default defineCommand({
     const fortune = fortunes[randomInt(fortunes.length)] ?? fortunes[0];
     const embed = new EmbedBuilder()
       .setColor(fortuneColor)
-      .setTitle("🍪 Your Fortune")
+      .setTitle("🍪 your fortune")
       .setDescription(fortune);
 
     await interaction.reply({ embeds: [embed] });
