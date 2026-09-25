@@ -24,7 +24,7 @@ function buildServerInfoEmbeds(): EmbedBuilder[] {
       .setColor(0x5865f2)
       .setDescription(serverInfoMarkdown)
       .setFooter({ text: serverInfoFooter }),
-    new EmbedBuilder().setColor(0x5865f2).setDescription(translationFeaturesMarkdown),
+    new EmbedBuilder().setColor(0x57f287).setDescription(translationFeaturesMarkdown),
   ];
 }
 
