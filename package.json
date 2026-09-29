@@ -23,16 +23,16 @@
     "intent": "pnpm dlx @tanstack/intent@latest"
   },
   "dependencies": {
-    "@tanstack/ai": "0.61.0",
-    "@tanstack/ai-gemini": "0.33.1",
+    "@tanstack/ai": "0.63.0",
+    "@tanstack/ai-gemini": "0.34.1",
     "discord.js": "14.27.0"
   },
   "devDependencies": {
-    "@types/node": "26.6.2",
+    "@types/node": "26.6.3",
     "husky": "9.1.7",
-    "lint-staged": "17.5.1",
-    "oxfmt": "0.70.0",
-    "oxlint": "1.85.0",
+    "lint-staged": "17.6.0",
+    "oxfmt": "0.71.0",
+    "oxlint": "1.86.0",
     "oxlint-tsgolint": "7.0.2003",
     "typescript": "7.0.2"
   },
@@ -42,7 +42,7 @@
   "engines": {
     "node": ">=24"
   },
-  "packageManager": "pnpm@12.6.0",
+  "packageManager": "pnpm@12.8.1",
   "intent": {
     "skills": [
       "@tanstack/*"
