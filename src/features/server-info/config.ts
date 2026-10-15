@@ -4,7 +4,7 @@ export const serverInfoChannelId = getEnv("DISCORD_SERVER_INFO_CHANNEL_ID");
 
 /** Edit this markdown, then run `/server-info` to publish the changes. */
 export const serverInfoMarkdown = `
-## hunter the bad boy
+## Yunnity
 
 ### :video_game: We usually play
 Roblox • Minecraft • Steam games • whatever looks fun
