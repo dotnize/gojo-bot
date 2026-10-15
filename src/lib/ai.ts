@@ -1,4 +1,4 @@
-import { geminiText, GeminiTextModels, type GeminiTextModel } from "@tanstack/ai-gemini";
+import type { GeminiTextModel } from "@tanstack/ai-gemini";
 
 import { getAiConfig } from "#/config.ts";
 
@@ -6,23 +6,11 @@ const fallbackModel = "gemini-3.1-flash-lite";
 export const standardAiTimeoutMs = 5 * 60_000;
 export const catchUpAiTimeoutMs = 6 * 60_000;
 
-export function getGeminiTextAdapter(model = getAiConfig().model) {
-  if (!isGeminiTextModel(model)) {
-    throw new Error(`Unsupported GEMINI_MODEL: ${model}`);
-  }
-
-  return geminiText(model);
-}
-
 export async function withGeminiFallback<T>(
   request: (model: GeminiTextModel, abortController: AbortController) => Promise<T>,
   timeoutMs = standardAiTimeoutMs,
 ): Promise<T> {
   const { model } = getAiConfig();
-
-  if (!isGeminiTextModel(model)) {
-    throw new Error(`Unsupported GEMINI_MODEL: ${model}`);
-  }
 
   try {
     return await requestWithTimeout(model, request, timeoutMs);
@@ -64,8 +52,4 @@ async function requestWithTimeout<T>(
   } finally {
     clearTimeout(timer);
   }
-}
-
-function isGeminiTextModel(model: string): model is GeminiTextModel {
-  return GeminiTextModels.some((supportedModel) => supportedModel === model);
 }

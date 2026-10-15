@@ -20,17 +20,6 @@ export const reactionRolesChannelId = getEnv("DISCORD_REACTION_ROLES_CHANNEL_ID"
 /** Replace every option's role ID with the corresponding Discord role ID. */
 export const reactionRolePanels = [
   {
-    key: "languages",
-    title: "Languages",
-    description: "React below for the non-English languages you speak.",
-    color: 0x57f287,
-    enabled: true,
-    options: [
-      { emoji: "🟡", label: "Filipino", roleId: "1553057648113483776" },
-      { emoji: "🟣", label: "Mandarin", roleId: "1553057674365636660" },
-    ],
-  },
-  {
     key: "activities",
     title: "Activities",
     description: "Get pinged for invites for games or other activities.",

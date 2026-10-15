@@ -1,4 +1,5 @@
 import { chat, type JSONSchema } from "@tanstack/ai";
+import { geminiText } from "@tanstack/ai-gemini";
 import {
   EmbedBuilder,
   InteractionContextType,
@@ -7,7 +8,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-import { getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
+import { withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -95,7 +96,7 @@ function isLanguageTips(value: unknown): value is LanguageTips {
 async function generateLanguageTips(topic?: string): Promise<LanguageTips> {
   return withGeminiFallback(async (model, abortController) => {
     const result: unknown = await chat({
-      adapter: getGeminiTextAdapter(model),
+      adapter: geminiText(model),
       abortController,
       messages: [
         {

@@ -1,3 +1,5 @@
+import type { GeminiTextModel } from "@tanstack/ai-gemini";
+
 export function getEnv(name: string): string {
   return process.env[name]?.trim() ?? "";
 }
@@ -39,6 +41,6 @@ export function getCommandDeploymentConfig() {
 
 export function getAiConfig() {
   return {
-    model: getEnv("GEMINI_MODEL") || "gemini-3.5-flash-lite",
+    model: (getEnv("GEMINI_MODEL") || "gemini-3.5-flash-lite") as GeminiTextModel,
   } as const;
 }

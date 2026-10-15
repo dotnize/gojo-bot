@@ -1,4 +1,5 @@
 import { chat, type JSONSchema } from "@tanstack/ai";
+import { geminiText } from "@tanstack/ai-gemini";
 import {
   ApplicationCommandType,
   ContextMenuCommandBuilder,
@@ -9,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
+import { withGeminiFallback } from "#/lib/ai.ts";
 import { defineMessageCommand } from "#/lib/commands.ts";
 import { showShareablePreview } from "#/lib/share-preview.ts";
 
@@ -130,7 +131,7 @@ function isTranslationResult(value: unknown): value is TranslationResult {
 async function translateMessage(input: TranslationInput): Promise<TranslationResult> {
   return withGeminiFallback(async (model, abortController) => {
     const result: unknown = await chat({
-      adapter: getGeminiTextAdapter(model),
+      adapter: geminiText(model),
       abortController,
       messages: [
         {

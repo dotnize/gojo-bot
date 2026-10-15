@@ -1,6 +1,7 @@
 import { randomInt } from "node:crypto";
 
 import { chat, streamToText, type ModelMessage } from "@tanstack/ai";
+import { geminiText } from "@tanstack/ai-gemini";
 import {
   EmbedBuilder,
   MessageType,
@@ -9,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getGeminiTextAdapter, withGeminiFallback } from "#/lib/ai.ts";
+import { withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -119,14 +120,14 @@ async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Pro
   messages.push({ role: "user", content: prompt });
   return withGeminiFallback(async (model, abortController) => {
     const stream = chat({
-      adapter: getGeminiTextAdapter(model),
+      adapter: geminiText(model),
       abortController,
       messages,
       systemPrompts: [
         `${systemPrompt} For the language tip only, use ${tipTopic} as a loose theme and choose a natural everyday expression. End with a plain-text line in exactly this format: ${tipFormat}. Do not use Markdown on that line.`,
       ],
     });
-    const answer = (await streamToText(stream)).trim();
+    const answer = (await streamToText(stream)).text.trim();
 
     if (!answer) {
       throw new Error("Gemini returned an empty response.");
