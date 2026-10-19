@@ -10,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { withGeminiFallback } from "#/lib/ai.ts";
+import { getAiText, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -172,7 +172,7 @@ function getInteractionDisplayName(interaction: ChatInputCommandInteraction): st
 
 function getPrompt(message: Message): string {
   const botMention = new RegExp(`<@!?${message.client.user.id}>`, "gu");
-  return message.content.replaceAll(botMention, "").trim();
+  return getAiText(message.content.replaceAll(botMention, " "), message.channel);
 }
 
 async function getReplyHistory(message: Message, botReply: Message): Promise<HistoryTurn[]> {
@@ -206,7 +206,7 @@ async function getReplyHistory(message: Message, botReply: Message): Promise<His
 
     history.unshift({
       prompt: prompt.slice(0, maxHistoryPromptLength),
-      answer: answer.slice(0, maxHistoryAnswerLength),
+      answer: getAiText(answer, reply.channel).slice(0, maxHistoryAnswerLength),
     });
 
     if (
@@ -299,7 +299,12 @@ export default defineCommand({
     ),
 
   async execute(interaction) {
-    const prompt = interaction.options.getString("prompt", true).trim();
+    const prompt = getAiText(interaction.options.getString("prompt", true), interaction.channel);
+
+    if (!prompt) {
+      await interaction.reply("what would you like to ask?");
+      return;
+    }
 
     await interaction.deferReply();
 

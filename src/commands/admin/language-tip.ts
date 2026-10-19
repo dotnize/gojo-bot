@@ -8,7 +8,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-import { withGeminiFallback } from "#/lib/ai.ts";
+import { getAiText, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -162,7 +162,7 @@ export default defineCommand({
       return;
     }
 
-    const topic = interaction.options.getString("topic")?.trim();
+    const topic = getAiText(interaction.options.getString("topic") ?? "", channel);
 
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 

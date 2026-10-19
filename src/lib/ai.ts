@@ -1,10 +1,16 @@
 import type { GeminiTextModel } from "@tanstack/ai-gemini";
+import { cleanContent, type TextBasedChannel } from "discord.js";
 
 import { getAiConfig } from "#/config.ts";
 
 const fallbackModel = "gemini-3.1-flash-lite";
 export const standardAiTimeoutMs = 5 * 60_000;
 export const catchUpAiTimeoutMs = 6 * 60_000;
+
+export function getAiText(text: string, channel: TextBasedChannel | null): string {
+  const readableText = channel ? cleanContent(text, channel) : text;
+  return readableText.replaceAll(/<(?:@[!&]?|#)\d+>/gu, " ").trim();
+}
 
 export async function withGeminiFallback<T>(
   request: (model: GeminiTextModel, abortController: AbortController) => Promise<T>,

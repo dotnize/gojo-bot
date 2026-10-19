@@ -8,7 +8,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { catchUpAiTimeoutMs, withGeminiFallback } from "#/lib/ai.ts";
+import { catchUpAiTimeoutMs, getAiText, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 import { showShareablePreview } from "#/lib/share-preview.ts";
 
@@ -31,14 +31,20 @@ function fitEmbedDescription(description: string): string {
 }
 
 function toTranscriptMessage(message: Message): TranscriptMessage | undefined {
-  if (message.author.bot || !message.content.trim()) {
+  if (message.author.bot) {
+    return undefined;
+  }
+
+  const text = getAiText(message.content, message.channel);
+
+  if (!text) {
     return undefined;
   }
 
   return {
     author: message.member?.displayName ?? message.author.displayName,
     sentAt: message.createdAt.toISOString(),
-    text: message.cleanContent.trim(),
+    text,
   };
 }
 
