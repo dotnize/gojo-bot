@@ -106,7 +106,11 @@ function parseBotAnswer(answer: string): BotAnswer {
     : { body: answer };
 }
 
-async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Promise<BotAnswer> {
+async function askBot(
+  threadId: string,
+  prompt: string,
+  history: readonly HistoryTurn[] = [],
+): Promise<BotAnswer> {
   const tipLanguage = randomInt(2) === 0 ? "Tagalog" : "Mandarin";
   const tipTopic = languageTipTopics[randomInt(languageTipTopics.length)];
   const tipFormat =
@@ -121,6 +125,7 @@ async function askBot(prompt: string, history: readonly HistoryTurn[] = []): Pro
   return withGeminiFallback(async (model, abortController) => {
     const stream = chat({
       adapter: geminiText(model),
+      threadId,
       abortController,
       messages,
       systemPrompts: [
@@ -270,7 +275,7 @@ export async function handleAskMessage(message: Message): Promise<void> {
 
   try {
     const history = botReply ? await getReplyHistory(message, botReply) : [];
-    const answer = await askBot(prompt, history);
+    const answer = await askBot(message.id, prompt, history);
 
     await message.reply({
       embeds: [buildResponseEmbed(answer.body, answer.languageTip)],
@@ -309,7 +314,7 @@ export default defineCommand({
     await interaction.deferReply();
 
     try {
-      const answer = await askBot(prompt);
+      const answer = await askBot(interaction.id, prompt);
       const displayName = getInteractionDisplayName(interaction);
       const description = `**${displayName}:** ${prompt}\n\n**Gojo:**\n${answer.body}`;
 

@@ -129,10 +129,14 @@ function isTranslationResult(value: unknown): value is TranslationResult {
   );
 }
 
-async function translateMessage(input: TranslationInput): Promise<TranslationResult> {
+async function translateMessage(
+  threadId: string,
+  input: TranslationInput,
+): Promise<TranslationResult> {
   return withGeminiFallback(async (model, abortController) => {
     const result: unknown = await chat({
       adapter: geminiText(model),
+      threadId,
       abortController,
       messages: [
         {
@@ -180,7 +184,7 @@ export default defineMessageCommand({
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const input = await getTranslationInput(interaction.targetMessage);
-    const result = await translateMessage(input);
+    const result = await translateMessage(interaction.id, input);
     const title =
       result.sourceLanguage === "English"
         ? "Already in English"

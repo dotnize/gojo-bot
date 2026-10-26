@@ -48,10 +48,14 @@ function toTranscriptMessage(message: Message): TranscriptMessage | undefined {
   };
 }
 
-async function summarizeMessages(messages: readonly TranscriptMessage[]): Promise<string> {
+async function summarizeMessages(
+  threadId: string,
+  messages: readonly TranscriptMessage[],
+): Promise<string> {
   return withGeminiFallback(async (model, abortController) => {
     const stream = chat({
       adapter: geminiText(model),
+      threadId,
       abortController,
       messages: [
         {
@@ -111,7 +115,7 @@ export default defineCommand({
       return;
     }
 
-    const summary = await summarizeMessages(transcript);
+    const summary = await summarizeMessages(interaction.id, transcript);
     const embed = new EmbedBuilder()
       .setColor(responseColor)
       .setTitle("Catch-up")

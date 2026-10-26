@@ -93,10 +93,11 @@ function isLanguageTips(value: unknown): value is LanguageTips {
   return isLanguageTip(tips.tagalog) && isMandarinTip(tips.mandarin);
 }
 
-async function generateLanguageTips(topic?: string): Promise<LanguageTips> {
+async function generateLanguageTips(threadId: string, topic?: string): Promise<LanguageTips> {
   return withGeminiFallback(async (model, abortController) => {
     const result: unknown = await chat({
       adapter: geminiText(model),
+      threadId,
       abortController,
       messages: [
         {
@@ -167,7 +168,7 @@ export default defineCommand({
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     try {
-      const tips = await generateLanguageTips(topic);
+      const tips = await generateLanguageTips(interaction.id, topic);
       const embed = new EmbedBuilder()
         .setColor(responseColor)
         .setTitle("Language tips")

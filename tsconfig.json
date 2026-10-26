@@ -9,7 +9,7 @@
     "allowImportingTsExtensions": true,
     "erasableSyntaxOnly": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": false, // FIXME: re-enable once https://github.com/TanStack/ai/issues/1777 is fixed
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "strict": true,
     "verbatimModuleSyntax": true,
