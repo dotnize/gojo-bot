@@ -25,8 +25,8 @@ unchanged and labeled **Already in English**.
 
 ## Catch up on a channel
 
-Run `/catch-up` in a server text channel. The optional `messages` argument accepts 5–50 and
-defaults to 15. The bot reads that many recent channel messages, removes bot and empty messages,
+Run `/catch-up` in a server text channel. The optional `messages` argument accepts 5–100 and
+defaults to 50. The bot reads that many recent channel messages, removes bot and empty messages,
 then sends an English summary.
 
 The result is always ephemeral. Review it, then press **Share** to publish it in the same channel
@@ -41,7 +41,7 @@ can only post once. The published footer identifies the member who shared it.
   a member invokes the command.
 - The bot does not add persistent storage for message text, translations, or summaries. Provider
   processing remains subject to the configured Gemini account and its data-handling terms.
-- Translation is text-only. Catch-up reads at most 50 messages and ignores bot, attachment-only,
+- Translation is text-only. Catch-up reads at most 100 messages and ignores bot, attachment-only,
   and empty messages.
 - AI output can mistranslate slang, miss context, or summarize incorrectly. Members should check
   important details against the original conversation and report misleading output to the bot

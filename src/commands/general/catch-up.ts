@@ -13,6 +13,7 @@ import { defineCommand } from "#/lib/commands.ts";
 import { showShareablePreview } from "#/lib/share-preview.ts";
 
 const responseColor = 0x5865f2;
+const defaultMessageCount = 50;
 const embedDescriptionLimit = 4_096;
 const truncationNotice = "\n\n_The rest of the catch-up was cut short._";
 
@@ -85,9 +86,9 @@ export default defineCommand({
     .addIntegerOption((option) =>
       option
         .setName("messages")
-        .setDescription("Number of recent messages to inspect (default: 15).")
+        .setDescription(`Number of recent messages to inspect (default: ${defaultMessageCount}).`)
         .setMinValue(5)
-        .setMaxValue(50),
+        .setMaxValue(100),
     ),
 
   async execute(interaction) {
@@ -101,7 +102,7 @@ export default defineCommand({
       return;
     }
 
-    const messageCount = interaction.options.getInteger("messages") ?? 15;
+    const messageCount = interaction.options.getInteger("messages") ?? defaultMessageCount;
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const fetchedMessages = await channel.messages.fetch({ limit: messageCount });

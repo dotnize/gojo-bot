@@ -38,7 +38,7 @@ Use **Apps → Translate to English** on a message for a private English transla
 is intended for Filipino/Tagalog, Cebuano/Bisaya, Simplified or informal Chinese/Mandarin, and
 mixed messages. It can use up to two nearby messages on each side for context.
 
-`/catch-up` summarizes 5–50 recent text messages in English (15 by default). Both results are
+`/catch-up` summarizes 5–100 recent text messages in English (50 by default). Both results are
 ephemeral. After reviewing a result, press **Share** to publish it in the same channel. Both
 features send relevant message text to the configured Gemini model and may make mistakes.
 

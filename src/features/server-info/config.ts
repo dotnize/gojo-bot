@@ -23,7 +23,7 @@ most members here are Filipinos and occasionally speak Filipino in the chats, bu
 so the @Gojo bot has these 2 features:
 
 - **Translate a message:** right-click a message (or hold on mobile) → Apps → Gojo → Translate to English
-- \`/catch-up\`: just type this command in the chat to translate+summarize recent messages, defaults to recent 15 messages
+- \`/catch-up\`: just type this command in the chat to translate+summarize recent messages, defaults to recent 50 messages (up to 100)
 
 these are private by default, so don't be shy. Nobody will know you used them, unless you click the Share button after :)
 `.trim();
