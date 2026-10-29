@@ -10,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getAiText, withGeminiFallback } from "#/lib/ai.ts";
+import { getAiMessageText, getAiText, withGeminiFallback } from "#/lib/ai.ts";
 import { defineMessageCommand } from "#/lib/commands.ts";
 import { showShareablePreview } from "#/lib/share-preview.ts";
 
@@ -66,10 +66,10 @@ interface TranslationInput {
   readonly after: readonly TranslationMessage[];
 }
 
-function toTranslationMessage(message: Message, textLimit: number): TranslationMessage {
+function toTranslationMessage(message: Message, text: string): TranslationMessage {
   return {
     author: message.member?.displayName ?? message.author.displayName,
-    text: getAiText(message.content, message.channel).slice(0, textLimit),
+    text,
   };
 }
 
@@ -87,7 +87,7 @@ function originalMessageLink(message: Message): string {
 }
 
 async function getTranslationInput(message: Message): Promise<TranslationInput> {
-  const selected = toTranslationMessage(message, Number.POSITIVE_INFINITY);
+  const selected = toTranslationMessage(message, getAiText(message.content, message.channel));
   const channel = message.channel;
 
   if (!("messages" in channel)) {
@@ -105,9 +105,14 @@ async function getTranslationInput(message: Message): Promise<TranslationInput> 
     }
 
     return [...result.value.values()]
-      .filter((nearbyMessage) => !nearbyMessage.author.bot && nearbyMessage.content.trim())
+      .filter((nearbyMessage) => !nearbyMessage.author.bot)
       .sort((left, right) => left.createdTimestamp - right.createdTimestamp)
-      .map((nearbyMessage) => toTranslationMessage(nearbyMessage, contextTextLimit))
+      .map((nearbyMessage) =>
+        toTranslationMessage(
+          nearbyMessage,
+          getAiMessageText(nearbyMessage).slice(0, contextTextLimit),
+        ),
+      )
       .filter((nearbyMessage) => nearbyMessage.text.length > 0);
   });
 

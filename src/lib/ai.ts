@@ -1,5 +1,5 @@
 import type { GeminiTextModel } from "@tanstack/ai-gemini";
-import { cleanContent, type TextBasedChannel } from "discord.js";
+import { cleanContent, type Message, type TextBasedChannel } from "discord.js";
 
 import { getAiConfig } from "#/config.ts";
 
@@ -10,6 +10,16 @@ export const catchUpAiTimeoutMs = 6 * 60_000;
 export function getAiText(text: string, channel: TextBasedChannel | null): string {
   const readableText = channel ? cleanContent(text, channel) : text;
   return readableText.replaceAll(/<(?:@[!&]?|#)\d+>/gu, " ").trim();
+}
+
+export function getAiMessageText(message: Message, text = message.content): string {
+  const attachments = message.attachments.map((attachment) => {
+    const mediaType = attachment.contentType?.split("/")[0] ?? "file";
+    const type = ["image", "video", "audio"].includes(mediaType) ? mediaType : "file";
+    return `[${type} attached; contents unavailable]`;
+  });
+
+  return [getAiText(text, message.channel), ...attachments].filter(Boolean).join("\n");
 }
 
 export async function withGeminiFallback<T>(

@@ -8,7 +8,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { catchUpAiTimeoutMs, getAiText, withGeminiFallback } from "#/lib/ai.ts";
+import { catchUpAiTimeoutMs, getAiMessageText, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 import { showShareablePreview } from "#/lib/share-preview.ts";
 
@@ -36,7 +36,7 @@ function toTranscriptMessage(message: Message): TranscriptMessage | undefined {
     return undefined;
   }
 
-  const text = getAiText(message.content, message.channel);
+  const text = getAiMessageText(message);
 
   if (!text) {
     return undefined;
@@ -112,7 +112,7 @@ export default defineCommand({
       .filter((message) => message !== undefined);
 
     if (transcript.length === 0) {
-      await interaction.editReply("I couldn't find any recent text messages to summarize.");
+      await interaction.editReply("I couldn't find any recent messages to summarize.");
       return;
     }
 

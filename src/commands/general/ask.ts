@@ -10,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getAiText, withGeminiFallback } from "#/lib/ai.ts";
+import { getAiMessageText, getAiText, withGeminiFallback } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -177,7 +177,7 @@ function getInteractionDisplayName(interaction: ChatInputCommandInteraction): st
 
 function getPrompt(message: Message): string {
   const botMention = new RegExp(`<@!?${message.client.user.id}>`, "gu");
-  return getAiText(message.content.replaceAll(botMention, " "), message.channel);
+  return getAiMessageText(message, message.content.replaceAll(botMention, " "));
 }
 
 async function getReplyHistory(message: Message, botReply: Message): Promise<HistoryTurn[]> {
