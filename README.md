@@ -10,8 +10,8 @@ A Discord bot for a Discord community, built with discord.js and TypeScript.
    the bot retries it once with `gemini-3.1-flash-lite` (unless that is already the selected model).
    Each attempt has a five-minute timeout, except `/catch-up`, which allows six minutes per attempt.
 3. During development, set `DISCORD_GUILD_ID` so command updates deploy to one server quickly.
-4. In the Discord Developer Portal, enable the **Message Content Intent** for the bot. `/catch-up`
-   needs it to read recent message text.
+4. In the Discord Developer Portal, enable the **Message Content Intent** for the bot. `/ask`
+   and `/catch-up` need it to read recent message text.
 5. Run `pnpm deploy-cmds` whenever a command definition changes.
 6. Run `pnpm dev` to start the bot with Node's watch mode.
 
@@ -31,6 +31,33 @@ treated as a command module. Nested category folders are not scanned.
 
 Use `defineMessageCommand` instead for a message context-menu command. Members run those commands
 from **Apps** after right-clicking or long-pressing a message.
+
+## Ask Gojo
+
+Use `/ask`, mention Gojo, or reply to a message posted by Gojo to ask a question. Replying to
+another member's message also works when you explicitly mention Gojo.
+
+Each request can use the 20 preceding messages in the current channel, including messages from
+other members and bots. Message replies also follow up to five earlier messages in the reply
+chain, regardless of author or age. The reply chain takes priority and is deduplicated from recent
+history. Both are presented oldest first, with authors, timestamps, and reply relationships.
+
+Context includes message text and embed titles, descriptions, fields, authors, footers, and links.
+This lets Gojo understand replies to `/say create`, `/embed create`, shared catch-up summaries,
+and earlier `/ask` responses. A shared catch-up provides its published summary, not the original
+messages behind it. Attachments and embedded images are represented by placeholders; their
+contents are not read.
+
+Reply context is limited to 6,000 characters per message and 16,000 characters of message text in
+total. Recent context is limited to 1,500 characters per message and 8,000 characters of message
+text in total. Longer messages are marked as truncated; the nearest replies and newest channel
+messages are kept first. Gojo is instructed to ignore unrelated chat and treat context as quoted
+data rather than instructions.
+
+Reading history requires View Channel, Read Message History, and the Message Content Intent.
+If a referenced message or recent history cannot be read, Gojo continues with the available
+context. Relevant text is sent to the configured Gemini model only when Gojo is invoked; this
+feature adds no persistent message storage.
 
 ## Translation and catch-up
 
