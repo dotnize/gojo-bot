@@ -76,7 +76,7 @@ export function buildCatchUpEmbed(
   previousUrl?: string,
 ): EmbedBuilder {
   const previousLink = previousUrl
-    ? `-# [See previous catch-up 100 messages ago](${previousUrl})\n\n`
+    ? `-# [See previous catch-up ${messageCount} messages ago](${previousUrl})\n\n`
     : "";
 
   return new EmbedBuilder()
