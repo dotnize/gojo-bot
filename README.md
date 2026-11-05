@@ -69,6 +69,14 @@ mixed messages. It can use up to two nearby messages on each side for context.
 ephemeral. After reviewing a result, press **Share** to publish it in the same channel. Both
 features send relevant message text to the configured Gemini model and may make mistakes.
 
+To publish a catch-up automatically every 100 eligible human messages, add channel IDs to
+`automatedCatchUpChannelIds` in `src/features/automated-catch-up/config.ts` and restart the bot.
+The empty default disables the feature. New channels start counting from their first successful
+initialization; existing channels resume from their saved progress. Automated summaries use the
+previous automated summary as background and link back to it; manual summaries remain independent.
+Keep `data/automated-catch-up/` on a persistent writable volume, and run only one bot process.
+Enabled channels send chat to Gemini and publish summaries automatically, without a private preview.
+
 See [the language tools documentation](./docs/language-tools.md) for supported languages, privacy
 behavior, limits, and required permissions.
 

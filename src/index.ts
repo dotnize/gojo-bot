@@ -2,6 +2,7 @@ import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
 
 import { handleAskMessage } from "#/commands/general/ask.ts";
 import { getBotConfig } from "#/config.ts";
+import { AutomatedCatchUp } from "#/features/automated-catch-up/index.ts";
 import { handleReactionRoleChange } from "#/features/reaction-roles/index.ts";
 import { handleInteraction } from "#/handle-interaction.ts";
 import { createCommandRegistry, loadCommands } from "#/lib/commands.ts";
@@ -17,9 +18,11 @@ const client = new Client({
   ],
   partials: [Partials.User, Partials.Channel, Partials.Message, Partials.Reaction],
 });
+const automatedCatchUp = new AutomatedCatchUp(client);
 
 client.once(Events.ClientReady, (readyClient) => {
   console.info(`Ready as ${readyClient.user.tag}.`);
+  automatedCatchUp.start();
 });
 
 client.on(Events.InteractionCreate, (interaction) => {
@@ -29,6 +32,7 @@ client.on(Events.InteractionCreate, (interaction) => {
 });
 
 client.on(Events.MessageCreate, (message) => {
+  automatedCatchUp.handleMessage(message);
   void handleAskMessage(message).catch((error: unknown) => {
     console.error("Failed to handle an ask message:", error);
   });
@@ -48,6 +52,7 @@ client.on(Events.MessageReactionRemove, (reaction, user) => {
 
 async function shutDown(signal: NodeJS.Signals): Promise<void> {
   console.info(`Received ${signal}; disconnecting.`);
+  await automatedCatchUp.stop();
   await client.destroy();
 }
 
