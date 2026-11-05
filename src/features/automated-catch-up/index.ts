@@ -20,7 +20,7 @@ import {
   type TranscriptMessage,
 } from "#/lib/catch-up.ts";
 
-const batchSize = 100;
+const batchSize = 80;
 const retryIntervalMs = 60_000;
 const maxRetryDelayMs = 15 * 60_000;
 const automatedTitle = "Automated catch-up";
