@@ -21,9 +21,13 @@ commands give the caller a private preview with a **Share** button to publish it
 Catch-up requires Discord's Message Content privileged intent and the Read Message History
 permission.
 
-Selected or fetched message text is sent to Gemini only when a member invokes one of these
-features. Both prompts treat messages as untrusted text, and responses warn that AI translations
-and summaries can make mistakes.
+An optional channel allowlist also enables automatic catch-ups every 100 eligible human messages.
+Automated posts use the previous automated summary for continuity and link back to it. Progress
+is persisted across restarts; manual summaries remain separate.
+
+Selected or fetched message text is sent to Gemini when a member invokes one of these
+features or when an enabled channel accumulates a full automated batch. Both prompts treat messages
+as untrusted text, and responses warn that AI translations and summaries can make mistakes.
 
 See [language tools](./language-tools.md) for complete behavior, privacy expectations, limits,
 permissions, and failure behavior.
