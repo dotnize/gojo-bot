@@ -20,7 +20,7 @@ import {
   type TranscriptMessage,
 } from "#/lib/catch-up.ts";
 
-const batchSize = 80;
+const batchSize = 70;
 const retryIntervalMs = 60_000;
 const maxRetryDelayMs = 15 * 60_000;
 const automatedTitle = "Automated catch-up";
@@ -109,13 +109,21 @@ async function publishCatchUp(
   botId: string,
 ): Promise<Message> {
   const boundaryUrl = getBoundaryUrl(channel, pending.throughMessageId);
+  const boundaryField = {
+    name: "Conversation",
+    value: `[Jump to last summarized message](${boundaryUrl})`,
+  };
   // Recover a successful send if the response or subsequent checkpoint write failed.
-  // The title links to the last source message and doubles as a stable batch marker.
+  // The source link identifies the batch; also recognize older posts with linked titles.
   for await (const message of messagesSince(channel, pending.throughMessageId)) {
+    const embed = message.embeds[0];
     if (
       message.author.id === botId &&
-      message.embeds[0]?.title === automatedTitle &&
-      message.embeds[0].url === boundaryUrl
+      embed?.title === automatedTitle &&
+      (embed.url === boundaryUrl ||
+        embed.fields.some(
+          (field) => field.name === boundaryField.name && field.value === boundaryField.value,
+        ))
     ) {
       return message;
     }
@@ -123,7 +131,7 @@ async function publishCatchUp(
 
   const embed = buildCatchUpEmbed(pending.summary, batchSize, pending.previousUrl ?? undefined)
     .setTitle(automatedTitle)
-    .setURL(boundaryUrl);
+    .addFields(boundaryField);
   return channel.send({
     embeds: [embed],
     allowedMentions: { parse: [] },

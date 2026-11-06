@@ -52,7 +52,8 @@ summary is supplied separately as background context, with instructions to cover
 developments. A small **See previous catch-up 100 messages ago** link appears above the generated
 summary when that previous post is available. Manual `/catch-up` results never affect this chain.
 If the previous automated post was deleted, the next batch continues without its context or link.
-The embed title links to the last message covered, rather than the time the summary was posted.
+The embed title is plain text. A **Conversation** field below the summary contains a
+**Jump to last summarized message** link to the last message covered.
 Messages sent during generation belong to the next batch, so generation delays do not create gaps.
 
 Live message events trigger checks; a one-minute poll also catches partial batches, missed events,
