@@ -1,6 +1,10 @@
 import {
+  ChannelType,
   DiscordAPIError,
+  EmbedBuilder,
   PermissionFlagsBits,
+  ThreadAutoArchiveDuration,
+  type AnyThreadChannel,
   type Client,
   type Message,
   type SendableChannels,
@@ -15,7 +19,7 @@ import {
 } from "#/features/automated-catch-up/state.ts";
 import {
   buildCatchUpEmbed,
-  summarizeMessages,
+  summarizeAutomatedCatchUp,
   toTranscriptMessage,
   type TranscriptMessage,
 } from "#/lib/catch-up.ts";
@@ -24,8 +28,19 @@ const batchSize = 70;
 const retryIntervalMs = 60_000;
 const maxRetryDelayMs = 15 * 60_000;
 const automatedTitle = "Automated catch-up";
+const starterFooter = "Open the thread for the full catch-up • AI summaries can make mistakes.";
+const threadNameLimit = 100;
+const embedColor = 0x5865f2;
 
 type CatchUpChannel = Extract<SendableChannels, { guildId: string }>;
+type ThreadParentChannel = Extract<
+  CatchUpChannel,
+  { type: ChannelType.GuildText | ChannelType.GuildAnnouncement }
+>;
+
+function canHostThreads(channel: CatchUpChannel): channel is ThreadParentChannel {
+  return channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildAnnouncement;
+}
 
 interface BatchMessage {
   readonly id: string;
@@ -82,24 +97,71 @@ function getBoundaryUrl(channel: CatchUpChannel, throughMessageId: string): stri
   return `https://discord.com/channels/${channel.guildId}/${channel.id}/${throughMessageId}`;
 }
 
-async function getPreviousCatchUp(
+async function findPublishedMessage(
   channel: CatchUpChannel,
-  messageId: string | null,
+  pending: PendingCatchUp,
+  boundaryValue: string,
   botId: string,
 ): Promise<Message | undefined> {
-  if (!messageId) {
-    return undefined;
-  }
-  try {
-    const message = await channel.messages.fetch({ message: messageId, cache: false });
-    return message.author.id === botId && message.embeds[0]?.title === automatedTitle
-      ? message
-      : undefined;
-  } catch (error) {
-    if (error instanceof DiscordAPIError && error.code === 10008) {
-      return undefined;
+  // Recover a successful send if the response or subsequent checkpoint write failed.
+  // The boundary link identifies the batch.
+  for await (const message of messagesSince(channel, pending.throughMessageId)) {
+    const embed = message.embeds[0];
+    if (
+      message.author.id === botId &&
+      embed?.title === automatedTitle &&
+      embed.fields.some((field) => field.value === boundaryValue)
+    ) {
+      return message;
     }
-    throw error;
+  }
+  return undefined;
+}
+
+function getThreadName(pending: PendingCatchUp, starter: Message): string {
+  const date = starter.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const name = pending.title ? `${pending.title} · ${date}` : `Catch-up · ${date}`;
+  return name.length <= threadNameLimit ? name : `${name.slice(0, threadNameLimit - 1)}…`;
+}
+
+async function getOrStartThread(
+  channel: ThreadParentChannel,
+  starter: Message,
+  name: string,
+): Promise<AnyThreadChannel> {
+  // Threads started from a message share its ID, so a retry can find an earlier one.
+  try {
+    const existing = await channel.threads.fetch(starter.id);
+    if (existing) {
+      return existing;
+    }
+  } catch (error) {
+    if (!(error instanceof DiscordAPIError && error.code === 10003)) {
+      throw error;
+    }
+  }
+  return starter.startThread({ name, autoArchiveDuration: ThreadAutoArchiveDuration.OneHour });
+}
+
+async function ensureThreadCatchUp(
+  thread: AnyThreadChannel,
+  embed: EmbedBuilder,
+  nonce: string,
+  botId: string,
+): Promise<void> {
+  // The catch-up is the first reply, so check the oldest messages even if people replied since.
+  const messages = await thread.messages.fetch({ after: thread.id, limit: 10, cache: false });
+  const sent = messages.some(
+    (message) => message.author.id === botId && message.embeds[0]?.title === automatedTitle,
+  );
+  if (!sent) {
+    // Sending also unarchives the thread if it was archived during a long retry.
+    await thread.send({
+      embeds: [embed],
+      allowedMentions: { parse: [] },
+      nonce,
+      enforceNonce: true,
+    });
   }
 }
 
@@ -113,31 +175,42 @@ async function publishCatchUp(
     name: "Conversation",
     value: `[Jump to last summarized message](${boundaryUrl})`,
   };
-  // Recover a successful send if the response or subsequent checkpoint write failed.
-  // The source link identifies the batch; also recognize older posts with linked titles.
-  for await (const message of messagesSince(channel, pending.throughMessageId)) {
-    const embed = message.embeds[0];
-    if (
-      message.author.id === botId &&
-      embed?.title === automatedTitle &&
-      (embed.url === boundaryUrl ||
-        embed.fields.some(
-          (field) => field.name === boundaryField.name && field.value === boundaryField.value,
-        ))
-    ) {
-      return message;
-    }
-  }
-
-  const embed = buildCatchUpEmbed(pending.summary, batchSize, pending.previousUrl ?? undefined)
+  const fullEmbed = buildCatchUpEmbed(pending.summary, batchSize, pending.previousUrl ?? undefined)
     .setTitle(automatedTitle)
     .addFields(boundaryField);
-  return channel.send({
-    embeds: [embed],
-    allowedMentions: { parse: [] },
-    nonce: pending.throughMessageId,
-    enforceNonce: true,
-  });
+  const published = await findPublishedMessage(channel, pending, boundaryField.value, botId);
+
+  // Threads can't nest, and some channel types can't host them: post in full there.
+  if (!canHostThreads(channel)) {
+    return (
+      published ??
+      channel.send({
+        embeds: [fullEmbed],
+        allowedMentions: { parse: [] },
+        nonce: pending.throughMessageId,
+        enforceNonce: true,
+      })
+    );
+  }
+
+  const starter =
+    published ??
+    (await channel.send({
+      embeds: [
+        new EmbedBuilder()
+          .setColor(embedColor)
+          .setTitle(automatedTitle)
+          .setDescription(pending.tldr || `Caught up on the last ${batchSize} messages.`)
+          .addFields(boundaryField)
+          .setFooter({ text: starterFooter }),
+      ],
+      allowedMentions: { parse: [] },
+      nonce: pending.throughMessageId,
+      enforceNonce: true,
+    }));
+  const thread = await getOrStartThread(channel, starter, getThreadName(pending, starter));
+  await ensureThreadCatchUp(thread, fullEmbed, `${pending.throughMessageId}t`, botId);
+  return starter;
 }
 
 export class AutomatedCatchUp {
@@ -252,9 +325,12 @@ export class AutomatedCatchUp {
       PermissionFlagsBits.ViewChannel,
       PermissionFlagsBits.ReadMessageHistory,
       PermissionFlagsBits.EmbedLinks,
-      channel.isThread()
-        ? PermissionFlagsBits.SendMessagesInThreads
-        : PermissionFlagsBits.SendMessages,
+      ...(channel.isThread()
+        ? [PermissionFlagsBits.SendMessagesInThreads]
+        : [PermissionFlagsBits.SendMessages]),
+      ...(canHostThreads(channel)
+        ? [PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.SendMessagesInThreads]
+        : []),
     ];
     if (!channel.permissionsFor(botId)?.has(requiredPermissions)) {
       throw new Error(`Missing permissions for automated catch-up in channel ${channelId}.`);
@@ -267,27 +343,25 @@ export class AutomatedCatchUp {
       await saveChannelState(channelId, {
         version: 1,
         lastProcessedMessageId: recent.first()?.id ?? channel.id,
-        previousCatchUpMessageId: null,
+        previous: null,
         pending: null,
       });
       return false;
     }
-
     if (!state.pending) {
       const batch = await getNextBatch(channel, state.lastProcessedMessageId);
       const throughMessageId = batch.at(-1)?.id;
       if (batch.length < batchSize || !throughMessageId || this.stopped) {
         return false;
       }
-      const previous = await getPreviousCatchUp(channel, state.previousCatchUpMessageId, botId);
-      const summary = await summarizeMessages(
+      const result = await summarizeAutomatedCatchUp(
         `automated-catch-up:${channel.id}:${throughMessageId}`,
         batch.map((message) => message.transcript),
-        previous?.embeds[0]?.description ?? undefined,
+        state.previous?.summary,
       );
       state = {
         ...state,
-        pending: { throughMessageId, summary, previousUrl: previous?.url ?? null },
+        pending: { throughMessageId, ...result, previousUrl: state.previous?.url ?? null },
       };
       // Save generated output before sending, so publication retries don't spend
       // tokens again or lose the selected batch boundary across restarts.
@@ -301,7 +375,7 @@ export class AutomatedCatchUp {
     const completed: ChannelState = {
       version: 1,
       lastProcessedMessageId: state.pending.throughMessageId,
-      previousCatchUpMessageId: published.id,
+      previous: { summary: state.pending.summary, url: published.url },
       pending: null,
     };
     await saveChannelState(channelId, completed);

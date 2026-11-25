@@ -5,14 +5,22 @@ import { automatedCatchUpStateDirectory } from "#/features/automated-catch-up/co
 
 export interface PendingCatchUp {
   readonly throughMessageId: string;
+  readonly title: string;
+  readonly tldr: string;
   readonly summary: string;
   readonly previousUrl: string | null;
+}
+
+export interface PreviousCatchUp {
+  readonly summary: string;
+  readonly url: string;
 }
 
 export interface ChannelState {
   readonly version: 1;
   readonly lastProcessedMessageId: string;
-  readonly previousCatchUpMessageId: string | null;
+  // Kept locally because the full catch-up lives in a thread, not the channel.
+  readonly previous: PreviousCatchUp | null;
   readonly pending: PendingCatchUp | null;
 }
 
@@ -29,15 +37,20 @@ function isState(value: unknown): value is ChannelState {
     return false;
   }
 
-  const pending = value.pending;
+  const { previous, pending } = value;
   return (
     value.version === 1 &&
     isMessageId(value.lastProcessedMessageId) &&
-    (value.previousCatchUpMessageId === null || isMessageId(value.previousCatchUpMessageId)) &&
+    (previous === null ||
+      (isRecord(previous) &&
+        typeof previous.summary === "string" &&
+        typeof previous.url === "string")) &&
     (pending === null ||
       (isRecord(pending) &&
         isMessageId(pending.throughMessageId) &&
         BigInt(pending.throughMessageId) > BigInt(value.lastProcessedMessageId) &&
+        typeof pending.title === "string" &&
+        typeof pending.tldr === "string" &&
         typeof pending.summary === "string" &&
         pending.summary.length > 0 &&
         (pending.previousUrl === null || typeof pending.previousUrl === "string")))
