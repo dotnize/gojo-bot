@@ -1,5 +1,5 @@
 import { chat, type JSONSchema } from "@tanstack/ai";
-import { geminiText } from "@tanstack/ai-gemini";
+import { openaiText } from "@tanstack/ai-openai";
 import {
   EmbedBuilder,
   InteractionContextType,
@@ -8,7 +8,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-import { getAiText, withGeminiFallback } from "#/lib/ai.ts";
+import { aiModel, getAiText, withAiTimeout } from "#/lib/ai.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
 const responseColor = 0xf1c40f;
@@ -94,9 +94,10 @@ function isLanguageTips(value: unknown): value is LanguageTips {
 }
 
 async function generateLanguageTips(threadId: string, topic?: string): Promise<LanguageTips> {
-  return withGeminiFallback(async (model, abortController) => {
+  return withAiTimeout(async (abortController) => {
     const result: unknown = await chat({
-      adapter: geminiText(model),
+      adapter: openaiText(aiModel),
+      reasoning: "low",
       threadId,
       abortController,
       messages: [
@@ -114,7 +115,7 @@ async function generateLanguageTips(threadId: string, topic?: string): Promise<L
     });
 
     if (!isLanguageTips(result)) {
-      throw new TypeError("Gemini returned invalid language tips.");
+      throw new TypeError("The AI returned invalid language tips.");
     }
 
     return {

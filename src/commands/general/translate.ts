@@ -1,5 +1,5 @@
 import { chat, type JSONSchema } from "@tanstack/ai";
-import { geminiText } from "@tanstack/ai-gemini";
+import { openaiText } from "@tanstack/ai-openai";
 import {
   ApplicationCommandType,
   ContextMenuCommandBuilder,
@@ -10,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getAiMessageText, getAiText, withGeminiFallback } from "#/lib/ai.ts";
+import { aiModel, getAiMessageText, getAiText, withAiTimeout } from "#/lib/ai.ts";
 import { defineMessageCommand } from "#/lib/commands.ts";
 import { showShareablePreview } from "#/lib/share-preview.ts";
 
@@ -138,9 +138,10 @@ async function translateMessage(
   threadId: string,
   input: TranslationInput,
 ): Promise<TranslationResult> {
-  return withGeminiFallback(async (model, abortController) => {
+  return withAiTimeout(async (abortController) => {
     const result: unknown = await chat({
-      adapter: geminiText(model),
+      adapter: openaiText(aiModel),
+      reasoning: "low",
       threadId,
       abortController,
       messages: [
@@ -156,7 +157,7 @@ async function translateMessage(
     });
 
     if (!isTranslationResult(result)) {
-      throw new TypeError("Gemini returned an invalid translation result.");
+      throw new TypeError("The AI returned an invalid translation result.");
     }
 
     const translation = {

@@ -1,7 +1,7 @@
 # Language tools
 
 The bot offers translation and catch-up tools for following conversations across the community's
-supported languages. Both return English and use the same configured Gemini model as `/ask`.
+supported languages. Both return English and use the same `gpt-6-luna` model as `/ask`.
 Translation uses a neutral prompt; catch-up uses Gojo's casual narration.
 
 ## Translate a message
@@ -40,16 +40,16 @@ Add exact channel IDs to `automatedCatchUpChannelIds` in
 catch-ups, including background polling and state-file writes. A parent channel does not implicitly
 enable its threads; list each desired thread's ID separately.
 
-On first initialization, the bot saves the latest message as its starting point and waits for 100
+On first initialization, the bot saves the latest message as its starting point and waits for 70
 new eligible messages. It does not summarize the channel's old history. After that, progress survives
-restarts and messages sent while the bot was offline are processed in consecutive batches of 100.
+restarts and messages sent while the bot was offline are processed in consecutive batches of 70.
 The counter excludes bots, webhooks, system messages, and messages with no readable text or attachment
 placeholder. Attachments count, but their contents are never read. Deleted messages disappear from
 unprocessed batches; edits and deletions do not rewrite already published summaries.
 
 Each full batch is posted directly in an **Automated catch-up** embed. The previous automated
 summary is supplied separately as background context, with instructions to cover only new
-developments. A small **See previous catch-up 100 messages ago** link appears above the generated
+developments. A small **See previous catch-up 70 messages ago** link appears above the generated
 summary when that previous post is available. Manual `/catch-up` results never affect this chain.
 If the previous automated post was deleted, the next batch continues without its context or link.
 The embed title is plain text. A **Conversation** field below the summary contains a
@@ -59,9 +59,8 @@ Messages sent during generation belong to the next batch, so generation delays d
 Live message events trigger checks; a one-minute poll also catches partial batches, missed events,
 and downtime. A batch may therefore wait up to a minute before generation starts, plus time spent
 on earlier queued batches. Automatic generation is serialized across enabled channels. Failures
-retain the batch and retry with exponential delays from one to fifteen minutes, in addition to the
-existing Gemini fallback. Generated output is saved before publication, so send failures retry the
-same output without another Gemini call. Publication recovery checks for the same batch already
+retain the batch and retry with exponential delays from one to fifteen minutes. Generated output is saved before publication, so send failures retry the
+same output without another AI call. Publication recovery checks for the same batch already
 posted by this bot and also uses Discord's nonce deduplication.
 
 State lives in `data/automated-catch-up/`, ignored by Git. Keep that directory on a persistent,
@@ -72,29 +71,28 @@ retried rather than silently reset. Removing state starts counting fresh on the 
 and loses the previous-summary chain. Removing an ID from the allowlist pauses that channel;
 re-adding it resumes its saved progress, including intervening messages.
 
-Tell members which channels are enabled: their messages are sent to Gemini and summaries are
+Tell members which channels are enabled: their messages are sent to OpenAI and summaries are
 published automatically without a private preview or Share button. Automation shares API quota
-with manual AI commands and uses the existing `GEMINI_MODEL` and fallback settings.
+with manual AI commands and uses the same `gpt-6-luna` model.
 
 ## Privacy, limits, and failures
 
-- Translation sends the selected message and up to four nearby human messages to Gemini only after
+- Translation sends the selected message and up to four nearby human messages to OpenAI only after
   a member invokes the command. Nearby text is limited to 1,000 characters per message.
-- Manual catch-up sends the readable human messages in the requested history window to Gemini only
+- Manual catch-up sends the readable human messages in the requested history window to OpenAI only
   after a member invokes the command. Enabled automated channels send each full batch automatically,
   together with the previous automated summary when available.
 - Manual tools do not persist message text, translations, or summaries. Automated catch-up stores
   progress and pending output as described above. Provider processing remains subject to the
-  configured Gemini account and its data-handling terms.
+  configured OpenAI account and its data-handling terms.
 - Translation is text-only. Manual catch-up inspects at most 100 recent channel messages. Automated
-  catch-up paginates history as needed to collect 100 eligible messages. Both exclude bots and empty
+  catch-up paginates history as needed to collect 70 eligible messages. Both exclude bots and empty
   messages and represent attachments with placeholders rather than reading their contents.
 - AI output can mistranslate slang, miss context, or summarize incorrectly. Members should check
   important details against the original conversation and report misleading output to the bot
   maintainer with the original text and the incorrect result.
-- If a Gemini request fails or times out, the bot retries once with `gemini-3.1-flash-lite`.
-  Translation allows five minutes per attempt; catch-up allows six minutes per attempt. If the retry
-  also fails, the command returns an error. Unreadable nearby history does not prevent translation of the
+- If an AI request fails or times out, the command returns an error; there is no model fallback.
+  Translation allows five minutes per request; catch-up allows six minutes. Unreadable nearby history does not prevent translation of the
   selected message; unreadable catch-up history returns an error instead of a partial summary.
 
 ## Discord configuration

@@ -1,7 +1,7 @@
 import { randomInt } from "node:crypto";
 
 import { chat, streamToText } from "@tanstack/ai";
-import { geminiText } from "@tanstack/ai-gemini";
+import { openaiText } from "@tanstack/ai-openai";
 import {
   EmbedBuilder,
   MessageType,
@@ -10,7 +10,7 @@ import {
   type Message,
 } from "discord.js";
 
-import { getAiMessageText, getAiText, withGeminiFallback } from "#/lib/ai.ts";
+import { aiModel, getAiMessageText, getAiText, withAiTimeout } from "#/lib/ai.ts";
 import { getAskContext, type AskContext } from "#/lib/ask-context.ts";
 import { defineCommand } from "#/lib/commands.ts";
 
@@ -118,9 +118,10 @@ async function askBot(
     tipLanguage === "Mandarin"
       ? "LANGUAGE_TIP: Mandarin | <one very short casual, informal, or slang expression in Simplified Chinese> | <its matching Hanyu Pinyin with tone marks> | <its English meaning>"
       : "LANGUAGE_TIP: Tagalog | <one very short casual, informal, or slang expression in Tagalog> | <its English meaning>";
-  return withGeminiFallback(async (model, abortController) => {
+  return withAiTimeout(async (abortController) => {
     const stream = chat({
-      adapter: geminiText(model),
+      adapter: openaiText(aiModel),
+      reasoning: "low",
       threadId,
       abortController,
       messages: [
@@ -136,7 +137,7 @@ async function askBot(
     const answer = (await streamToText(stream)).text.trim();
 
     if (!answer) {
-      throw new Error("Gemini returned an empty response.");
+      throw new Error("The AI returned an empty response.");
     }
 
     return parseBotAnswer(answer);

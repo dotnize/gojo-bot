@@ -1,8 +1,8 @@
 import { chat, streamToText } from "@tanstack/ai";
-import { geminiText } from "@tanstack/ai-gemini";
+import { openaiText } from "@tanstack/ai-openai";
 import { EmbedBuilder, type Message } from "discord.js";
 
-import { catchUpAiTimeoutMs, getAiMessageText, withGeminiFallback } from "#/lib/ai.ts";
+import { aiModel, catchUpAiTimeoutMs, getAiMessageText, withAiTimeout } from "#/lib/ai.ts";
 
 const responseColor = 0x5865f2;
 const embedDescriptionLimit = 4_096;
@@ -45,9 +45,10 @@ export async function summarizeMessages(
   messages: readonly TranscriptMessage[],
   previousSummary?: string,
 ): Promise<string> {
-  return withGeminiFallback(async (model, abortController) => {
+  return withAiTimeout(async (abortController) => {
     const stream = chat({
-      adapter: geminiText(model),
+      adapter: openaiText(aiModel),
+      reasoning: "low",
       threadId,
       abortController,
       messages: [
@@ -63,7 +64,7 @@ export async function summarizeMessages(
     const summary = (await streamToText(stream)).text.trim();
 
     if (!summary) {
-      throw new Error("Gemini returned an empty catch-up.");
+      throw new Error("The AI returned an empty catch-up.");
     }
 
     return summary;

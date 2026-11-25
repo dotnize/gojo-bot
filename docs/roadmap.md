@@ -10,7 +10,7 @@ for it, preserve the original message, and clearly label the source and target l
 
 Members can use **Apps → Translate to English** on a single message. The result is ephemeral and
 labels the automatically detected source as Filipino/Tagalog, Cebuano/Bisaya, Chinese/Mandarin, or
-a mixture of supported languages. It uses the configured Gemini Flash-Lite model and is intended
+a mixture of supported languages. It uses the `gpt-6-luna` model and is intended
 for Simplified, modern, slang, and informal Chinese rather than Traditional Chinese. Messages that
 are already entirely English are returned unchanged.
 The translator can read up to two messages before and two after the selected message to resolve
@@ -21,11 +21,11 @@ commands give the caller a private preview with a **Share** button to publish it
 Catch-up requires Discord's Message Content privileged intent and the Read Message History
 permission.
 
-An optional channel allowlist also enables automatic catch-ups every 100 eligible human messages.
+An optional channel allowlist also enables automatic catch-ups every 70 eligible human messages.
 Automated posts use the previous automated summary for continuity and link back to it. Progress
 is persisted across restarts; manual summaries remain separate.
 
-Selected or fetched message text is sent to Gemini when a member invokes one of these
+Selected or fetched message text is sent to OpenAI when a member invokes one of these
 features or when an enabled channel accumulates a full automated batch. Both prompts treat messages
 as untrusted text, and responses warn that AI translations and summaries can make mistakes.
 

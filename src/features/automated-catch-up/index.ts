@@ -74,7 +74,7 @@ async function getNextBatch(channel: CatchUpChannel, after: string): Promise<Bat
       }
     }
   }
-  // Retain only the oldest 100 eligible messages, even after a long outage.
+  // Retain only the oldest `batchSize` eligible messages, even after a long outage.
   return batch.reverse();
 }
 
@@ -212,7 +212,7 @@ export class AutomatedCatchUp {
 
   private async drain(): Promise<void> {
     // Serialize automatic AI requests across channels to avoid overlapping batches
-    // and unnecessary bursts against the shared Gemini quota.
+    // and unnecessary bursts against the shared AI quota.
     while (!this.stopped && this.queued.size > 0) {
       const channelId = this.queued.values().next().value;
       if (!channelId) {
